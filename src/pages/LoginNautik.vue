@@ -2,9 +2,6 @@
 import { ref } from 'vue'
 import useAuth from '../stores/auth.js'
 
-// Emits
-const emit = defineEmits(['login'])
-
 
 const username = ref('')
 const password = ref('')
@@ -23,11 +20,9 @@ const passwordRules = [
 
 const onSubmit = () => {
 
-    emit('login', {
-      username: username.value,
-      password: password.value
-    })
+    auth.loginUser(username.value, password.value)
 }
+console.log(auth)
 
 </script>
 
