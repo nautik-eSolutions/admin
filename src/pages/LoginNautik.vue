@@ -22,7 +22,7 @@ const onSubmit = () => {
 
     auth.loginUser(username.value, password.value)
 }
-console.log(auth)
+
 
 </script>
 

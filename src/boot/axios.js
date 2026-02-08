@@ -1,4 +1,5 @@
 import { defineBoot } from '#q-app/wrappers'
+import useAuth from '../stores/auth.js'
 import axios from 'axios'
 
 // Be careful when using SSR for cross-request state pollution
@@ -10,15 +11,19 @@ import axios from 'axios'
 const api = axios.create({ baseURL: 'http://localhost' })
 
 export default defineBoot(({ app }) => {
-  // for use inside Vue files (Options API) through this.$axios and this.$api
+
+  api.interceptors.request.use(config => {
+    const authStore = useAuth()
+    if (authStore.token) {
+      console.log(authStore.token)
+      config.headers.Authorization = `Bearer ${authStore.token}`
+    }
+    return config
+  })
+
 
   app.config.globalProperties.$axios = axios
-  // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
-  //       so you won't necessarily have to import axios in each vue file
-
   app.config.globalProperties.$api = api
-  // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
-  //       so you can easily perform requests against your app's API
 })
 
 export { api }

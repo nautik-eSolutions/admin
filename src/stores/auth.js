@@ -1,4 +1,4 @@
-import { defineStore, acceptHMRUpdate } from 'pinia'
+import { defineStore } from 'pinia'
 import User from "src/model/User.js";
 import router from "src/router/routes.js";
 import {loginUser} from "src/service/AuthService.js";
@@ -9,21 +9,22 @@ export default defineStore('myStore', {
   state: () => {
     return {
       User: User,
-      token : "",
+      token : localStorage.getItem("token"),
       isAuthenticated: false,
     }
   },
   getters: {},
   actions: {
-    async loginUser(email, password) {
-      const resp = await loginUser(email, password)
+    async loginUser(userName, password) {
+      const resp = await loginUser(userName, password)
       if (resp.status === 200) {
-        this.User =  new User(resp.data.user.userName, resp.data.user.email)
+        this.User =  new User(userName)
         this.token =  resp.data.token
+
       }
       this.isAuthenticated =  true;
 
-      router.push("/")
+      router.push()
     }
     ,
     async logout(){
@@ -31,7 +32,7 @@ export default defineStore('myStore', {
       this.token = ''
       this.isAuthenticated = false
 
-      router.push("/")
+      router.push()
     }
 
   },
