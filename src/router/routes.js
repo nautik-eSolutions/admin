@@ -4,7 +4,8 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') }
-    ]
+    ],
+    meta: {requiresAuth: true}
   },
   {
     path: '/login',
@@ -15,15 +16,17 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/BoatList.vue') }
-    ]
-  },
-  {
-    path: '/barcos/add',
+    ],
+    meta: {requiresAuth: true}
+  },  {
+    path: '/ports',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/FormAddBoat.vue') }
-    ]
+      { path: '', component: () => import('pages/PortsList.vue') }
+    ],
+    meta: {requiresAuth: true}
   },
+
 
   // Always leave this as last one,
   // but you can also remove it
@@ -33,5 +36,7 @@ const routes = [
   }
 
 ]
+
+
 
 export default routes

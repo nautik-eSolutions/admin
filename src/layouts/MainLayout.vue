@@ -14,6 +14,8 @@
         <q-toolbar-title>
           NAUTIK enterprise
         </q-toolbar-title>
+
+        <q-btn push color="red" label="Logout"  @click="onSubmit"/>
       </q-toolbar>
     </q-header>
 
@@ -72,6 +74,11 @@ const linksList = [
     title: 'Modificar reservas',
     icon: '',
     link: '/reservas/modificar'
+  },
+  {
+    title: 'Puertos',
+    icon: '',
+    link: '/ports'
   }
 ]
 
@@ -85,6 +92,8 @@ export default defineComponent({
   setup () {
     const leftDrawerOpen = ref(false)
 
+
+
     return {
       linksList,
       leftDrawerOpen,
@@ -94,4 +103,25 @@ export default defineComponent({
     }
   }
 })
+</script>
+<script setup>
+
+import {useRouter} from "vue-router";
+import useAuth from '../stores/auth.js'
+
+const router = useRouter();
+const auth = useAuth();
+
+if(!auth.isAuthenticated){
+   router.push('/login')
+}
+
+
+
+const onSubmit = () => {
+
+   auth.logout()
+    router.push('/login')
+
+}
 </script>

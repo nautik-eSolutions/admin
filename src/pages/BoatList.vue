@@ -17,14 +17,15 @@
         <tbody>
         <tr>
           <td></td>
-          <td><q-input model-value="" name="name"></q-input></td>
-          <td><q-input model-value="" name="registryNumber"></q-input></td>
-          <td><q-input model-value="" type="number" name="length"></q-input></td>
-          <td><q-input model-value="" type="number" name="beam"></q-input></td>
-          <td><q-input model-value="" type="number" name="draft"></q-input></td>
-          <td><q-select model-value=""
+          <td><q-input v-model="nameBoat" name="name"></q-input></td>
+          <td><q-input v-model="boatRegisterNumber" name="registryNumber"></q-input></td>
+          <td><q-input v-model="length" type="number" name="length"></q-input></td>
+          <td><q-input v-model="beam" type="number" name="beam"></q-input></td>
+          <td><q-input v-model="draft" type="number" name="draft"></q-input></td>
+          <td><q-select v-model="boatType"
           :options="boatTypesMap"></q-select></td>
-          <td></td>
+          <td><q-select v-model="user"
+                        :options="usersMap"></q-select></td>
           <td ><button
             @click="addBoat()"
             class="bg-green"
@@ -53,56 +54,73 @@
   </q-page>
 </template>
 
-<script>
+<script setup>
+  import { ref, computed, onMounted } from 'vue'
+  import { BoatService } from 'src/service/BoatService.js'
+  import { UserService } from 'src/service/UserService.js'
+  import {Boat} from "src/model/Boat.js";
 
-import { defineComponent } from 'vue';
-import {BoatService} from "src/service/BoatService.js";
+  const nameBoat = ref();
+  const boatType = ref();
+  const boatRegisterNumber = ref();
+  const user = ref();
+  const length = ref();
+  const beam = ref();
+  const draft = ref();
 
 
+  const boats = ref([])
+  const boatTypes = ref([])
+  const users = ref([])
 
 
-export default defineComponent({
-  name: 'BoatList',
+  const boatTypesMap = computed(() =>
+  boatTypes.value.map(boatType => ({
+  value: boatType.id,
+  label: boatType.name
+}))
+  )
 
-  data() {
-    return {
-      boats: [],
-      boatTypes:[]
+  const usersMap = computed(() =>
+  users.value.map(user => ({
+  value: user.id,
+  label: user.userName
+}))
+  )
+
+
+  const loadBoats = async () => {
+  boats.value = await BoatService.getBoats()
+  boatTypes.value = await BoatService.getBoatsTypes()
+  console.log(boatTypes.value)
+}
+
+  const loadUsers = async () => {
+  users.value = await UserService.getAll()
+}
+
+  const deleteBoat = async (boatId) => {
+  console.log('Eliminar barco con id:', boatId)
+  await BoatService.delete(boatId)
+  await loadBoats()
+}
+
+  const addBoat = async () => {
+    try{
+      await BoatService.addBoat(new Boat(nameBoat.value, boatRegisterNumber.value, length.value, beam.value, draft.value, boatType.value.label), user.value.value)
+      await loadBoats()
+    }catch(err){
+      console.log("Error: "+ err)
     }
-  },
-  async mounted() {
-   await this.loadBoats();
-  },
-
-  computed: {
-     boatTypesMap() {
-      return this.boatTypes.map(botType => ({
-        value: botType.id,
-        label: botType.name,
-      }))
-    }
-
-  },
-
-  methods: {
-    async deleteBoat(boatId) {
-      console.log("Eliminar barco con id:", boatId);
-      await BoatService.delete(boatId)
-      await this.loadBoats()
-    },
-    addBoat() {
-
-    },
-
-    async loadBoats() {
-      this.boats = await BoatService.getBoats();
-      this.boatTypes = await BoatService.getBoatsTypes();
-      console.log(this.boatTypes);
 
 
-    }
+
   }
-});
 
-
+  onMounted(async () => {
+  await loadBoats()
+  await loadUsers()
+})
 </script>
+
+

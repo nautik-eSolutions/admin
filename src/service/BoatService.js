@@ -35,5 +35,17 @@ export class BoatService {
       return [];
     }
   }
+
+  static async addBoat(boat, userId) {
+    try {
+
+      const response = await api.post(`/api/v1/boats/${userId}`, boat);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+      return [];
+    }
+
+  }
 }
 

@@ -1,11 +1,14 @@
 <script setup>
 import { ref } from 'vue'
 import useAuth from '../stores/auth.js'
+import {useRouter} from "vue-router";
+
 
 
 const username = ref('')
 const password = ref('')
 const auth = useAuth();
+const router = useRouter();
 
 
 
@@ -18,9 +21,12 @@ const passwordRules = [
 ]
 
 
-const onSubmit = () => {
+const onSubmit = async () => {
 
-    auth.loginUser(username.value, password.value)
+  await auth.loginUser(username.value, password.value)
+  if(auth.isAuthenticated){
+    await router.push('/')
+  }
 }
 
 

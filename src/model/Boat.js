@@ -1,11 +1,10 @@
 export class Boat {
-  constructor(name, registryNumber, length, beam, draft, id, boatType, user) {
+  constructor(name, registryNumber, length, beam, draft, boatType, user) {
     this.name = name;
     this.registryNumber = registryNumber;
     this.length = length;
     this.beam = beam;
     this.draft = draft;
-    this.id = id;
     this.boatType = boatType
     this.user = user;
   }
@@ -17,7 +16,6 @@ export class Boat {
       json.length,
       json.beam,
       json.draft,
-      json.id,
       json.boatType,
       json.user
 
