@@ -1,54 +1,78 @@
 <template>
   <q-page class="flex flex-center">
     <div class="q-pa-md">
-      <q-markup-table>
-        <thead>
-        <tr>
-          <th class="text-center">ID</th>
-          <th class="text-center">NAME</th>
-          <th class="text-center">REGISTRY NUMBER</th>
-          <th class="text-center">LENGTH</th>
-          <th class="text-center">BEAM</th>
-          <th class="text-center">DRAFT</th>
-          <th class="text-center">BOAT TYPE</th>
-          <th class="text-center">USER</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td></td>
-          <td><q-input v-model="nameBoat" name="name"></q-input></td>
-          <td><q-input v-model="boatRegisterNumber" name="registryNumber"></q-input></td>
-          <td><q-input v-model="length" type="number" name="length"></q-input></td>
-          <td><q-input v-model="beam" type="number" name="beam"></q-input></td>
-          <td><q-input v-model="draft" type="number" name="draft"></q-input></td>
-          <td><q-select v-model="boatType"
-          :options="boatTypesMap"></q-select></td>
-          <td><q-select v-model="user"
-                        :options="usersMap"></q-select></td>
-          <td ><button
-            @click="addBoat()"
-            class="bg-green"
-          >ADD</button></td>
-        </tr>
-        </tbody>
-        <tbody v-for="boat in boats" :key="boat.id">
-        <tr>
-          <td>{{ boat.id }}</td>
-          <td>{{boat.name}}</td>
-          <td>{{boat.registryNumber}}</td>
-          <td>{{boat.length}}</td>
-          <td>{{boat.beam}}</td>
-          <td>{{boat.draft}}</td>
-          <td>{{boat.boatType}}</td>
-          <td>{{boat.user}}</td>
-          <td ><button
-            @click="deleteBoat(boat.id)"
-            class="bg-red"
-          >DELETE</button></td>
-        </tr>
-        </tbody>
-      </q-markup-table>
+      <q-table
+        title="Boats"
+        :rows="boats"
+        :columns="columns"
+        row-key="id"
+        v-model:pagination="pagination"
+        :rows-per-page-options="[5, 10, 20]"
+      >
+        <template v-slot:top-row>
+          <q-tr>
+            <q-td>
+
+            </q-td>
+            <q-td>
+              <q-input v-model="nameBoat" dense />
+            </q-td>
+
+            <q-td>
+              <q-input v-model="boatRegisterNumber" dense />
+            </q-td>
+
+            <q-td>
+              <q-input v-model="length" type="number" dense />
+            </q-td>
+
+            <q-td>
+              <q-input v-model="beam" type="number" dense />
+            </q-td>
+
+            <q-td>
+              <q-input v-model="draft" type="number" dense />
+            </q-td>
+
+            <q-td>
+              <q-select
+                v-model="boatType"
+                :options="boatTypesMap"
+                dense
+              />
+            </q-td>
+
+            <q-td>
+              <q-select
+                v-model="user"
+                :options="usersMap"
+                dense
+              />
+            </q-td>
+
+            <q-td>
+              <q-btn
+                color="positive"
+                label="ADD"
+                @click="addBoat"
+                dense
+              />
+            </q-td>
+          </q-tr>
+        </template>
+
+        <template v-slot:body-cell-actions="props">
+          <q-td align="center">
+            <q-btn
+              color="negative"
+              label="DELETE"
+              dense
+              @click="deleteBoat(props.row.id)"
+            />
+          </q-td>
+        </template>
+      </q-table>
+
     </div>
 
   </q-page>
@@ -58,7 +82,26 @@
   import { ref, computed, onMounted } from 'vue'
   import { BoatService } from 'src/service/BoatService.js'
   import { UserService } from 'src/service/UserService.js'
-  import {Boat} from "src/model/Boat.js";
+  import {BoatCreate} from "src/model/BoatCreate.js";
+
+  const columns = [
+    {name: 'id', label: 'ID', field: 'id', align: 'center'},
+    { name: 'name', label: 'NAME', field: 'name', align: 'center' },
+    { name: 'registryNumber', label: 'REGISTRY NUMBER', field: 'registryNumber', align: 'center' },
+    { name: 'length', label: 'LENGTH', field: 'length', align: 'center' },
+    { name: 'beam', label: 'BEAM', field: 'beam', align: 'center' },
+    { name: 'draft', label: 'DRAFT', field: 'draft', align: 'center' },
+    { name: 'boatType', label: 'BOAT TYPE', field: 'boatType', align: 'center' },
+    { name: 'user', label: 'USER', field: 'user', align: 'center' },
+    { name: 'actions', label: 'ACTIONS', field: 'actions', align: 'center' }
+  ]
+
+  const pagination = ref({
+    page: 1,
+    rowsPerPage: 5
+  })
+
+
 
   const nameBoat = ref();
   const boatType = ref();
@@ -107,8 +150,17 @@
 
   const addBoat = async () => {
     try{
-      await BoatService.addBoat(new Boat(nameBoat.value, boatRegisterNumber.value, length.value, beam.value, draft.value, boatType.value.label), user.value.value)
+      await BoatService.addBoat(new BoatCreate(nameBoat.value, boatRegisterNumber.value, length.value, beam.value, draft.value, boatType.value.label), user.value.value)
+
+      nameBoat.value = '';
+      boatRegisterNumber.value = '';
+      length.value = '';
+      beam.value = '';
+      draft.value = '';
+      boatType.value = null;
+      user.value = null;
       await loadBoats()
+
     }catch(err){
       console.log("Error: "+ err)
     }

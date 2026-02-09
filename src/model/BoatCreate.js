@@ -1,6 +1,5 @@
-export class Boat {
-  constructor(id, name, registryNumber, length, beam, draft, boatType, user) {
-    this.id = id;
+export class BoatCreate {
+  constructor(name, registryNumber, length, beam, draft, boatType, user) {
     this.name = name;
     this.registryNumber = registryNumber;
     this.length = length;
@@ -11,8 +10,7 @@ export class Boat {
   }
 
   static fromJson(json) {
-    return new Boat(
-      json.id,
+    return new BoatCreate(
       json.name,
       json.registryNumber,
       json.length,
