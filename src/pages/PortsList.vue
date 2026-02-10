@@ -17,10 +17,11 @@
 
 <script setup>
 import {onMounted, ref} from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter} from 'vue-router'
 import {PortService} from "src/service/PortService.js";
 
 const router = useRouter()
+
 
 
 const columnsPorts = [
@@ -49,6 +50,6 @@ onMounted(async () => {
 
 
 const goToPort = (evt, row) => {
-  router.push(`/${row.id}`)
+  router.push(`/ports/${row.id}`)
 }
 </script>

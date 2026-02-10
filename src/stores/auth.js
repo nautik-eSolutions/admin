@@ -9,9 +9,8 @@ export default defineStore('myStore', {
   state: () => {
     return {
       User: User,
-      token : localStorage.getItem("token"),
+      token : "",
       isAuthenticated: false,
-
     }
   },
   getters: {},

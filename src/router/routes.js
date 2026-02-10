@@ -25,6 +25,13 @@ const routes = [
       { path: '', component: () => import('pages/PortsList.vue') }
     ],
     meta: {requiresAuth: true}
+  },{
+    path: `/ports/:portId`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PortInfo.vue') }
+    ],
+    meta: {requiresAuth: true}
   },
 
 

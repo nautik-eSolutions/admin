@@ -13,4 +13,15 @@ export class PortService {
       return [];
     }
   }
+
+  static async getOne(id) {
+    try{
+      const response = await api.get(`/api/v1/ports/${id}`);
+      const port =  Port.fromJson(response.data);
+      console.log(port);
+      return port;
+    }catch(error){
+      console.error("Error:", error);
+    }
+  }
 }
