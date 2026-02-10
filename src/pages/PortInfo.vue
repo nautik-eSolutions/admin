@@ -6,7 +6,15 @@ import {ZoneService} from "src/service/ZoneService.js";
 
   const routeParams = useRoute().params
 
-  const port = ref();
+const zoneName = ref();
+const description = ref();
+
+const port = ref({
+  id: '',
+  name: '',
+  companyName: '',
+  cityName: ''
+});
   const zones = ref([]);
 
   onMounted(() => {
@@ -17,6 +25,12 @@ import {ZoneService} from "src/service/ZoneService.js";
 
     port.value = await PortService.getOne(routeParams.portId);
     zones.value = await ZoneService.getAllZonesAndMooringsFromPort(routeParams.portId);
+  }
+
+  const addZone = async () => {
+    await ZoneService.addZone(zoneName.value, description.value, routeParams.portId);
+    await loadPortInfo();
+
   }
 
 
@@ -60,6 +74,36 @@ const pagination = ref({
     </q-markup-table>
 
     <h3>Zones: </h3>
+
+    <q-tr>
+      <q-td class="text-center">
+        Name
+      </q-td>
+      <q-td class="text-center">
+        Description
+      </q-td>
+      <q-td>
+      </q-td>
+
+    </q-tr>
+
+    <q-tr>
+      <q-td>
+        <q-input v-model="zoneName" type="text" dense />
+      </q-td>
+      <q-td>
+        <q-input v-model="description" type="text" dense />
+      </q-td>
+      <q-td>
+        <q-btn
+          color="positive"
+          label="ADD"
+          @click="addZone"
+          dense
+        />
+      </q-td>
+
+    </q-tr>
 
     <q-expansion-item v-for="zone in zones" :key="zone.id"
                       expand-separator

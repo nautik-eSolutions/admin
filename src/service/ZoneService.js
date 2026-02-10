@@ -1,6 +1,7 @@
 import {api} from "boot/axios.js";
 import {Zone} from "src/model/Zone.js";
 import {Mooring} from "src/model/Mooring.js";
+import {ZoneCreate} from "src/model/ZoneCreate.js";
 
 export class ZoneService{
   static async getAllFromPort(portId){
@@ -33,5 +34,15 @@ export class ZoneService{
     }catch(error){
       console.log("Error: "+error);
     }
+  }
+
+  static async addZone(name, description, portId){
+    try{
+      const dto = new ZoneCreate(name, description);
+      return await api.post(`/api/v1/ports/${portId}/zones`, dto);
+    } catch(error){
+      console.log("Error: "+error);
+    }
+
   }
 }
