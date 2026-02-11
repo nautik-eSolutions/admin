@@ -82,7 +82,7 @@
   import { ref, computed, onMounted } from 'vue'
   import { BoatService } from 'src/service/BoatService.js'
   import { UserService } from 'src/service/UserService.js'
-  import {BoatCreate} from "src/model/BoatCreate.js";
+  import {BoatCreate} from "src/model/Create/BoatCreate.js";
 
   const columns = [
     {name: 'id', label: 'ID', field: 'id', align: 'center'},

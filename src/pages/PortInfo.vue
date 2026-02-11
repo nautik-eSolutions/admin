@@ -1,10 +1,15 @@
 <script setup>
 import {useRoute} from "vue-router";
-  import {PortService} from "src/service/PortService.js";
-import { onMounted, ref} from "vue";
+import {PortService} from "src/service/PortService.js";
+import {computed, onMounted, ref} from "vue";
 import {ZoneService} from "src/service/ZoneService.js";
+import {MooringDimensionsService} from "src/service/MooringDimensionsService.js";
+import {MooringCreate} from "src/model/Create/MooringCreate.js";
+import {MooringService} from "src/service/MooringService.js";
 
-  const routeParams = useRoute().params
+
+
+const routeParams = useRoute().params
 
 const zoneName = ref();
 const description = ref();
@@ -17,6 +22,26 @@ const port = ref({
 });
   const zones = ref([]);
 
+  const zonesMap = computed(() =>
+    zones.value.map(zone => ({
+    value: zone.id,
+    label: zone.name+" ("+zone.description+")"
+  }))
+  )
+
+
+const optionsDimensionsMap = computed(() =>
+  dimensionsOptions.value.map(dimensions => ({
+    value: dimensions.id,
+    label: dimensions.toString()
+  }))
+)
+
+  const mooringNumber = ref();
+  const dimensions = ref();
+  const dimensionsOptions = ref([]);
+  const zonaAddMooring = ref();
+
   onMounted(() => {
     loadPortInfo()
   })
@@ -25,11 +50,24 @@ const port = ref({
 
     port.value = await PortService.getOne(routeParams.portId);
     zones.value = await ZoneService.getAllZonesAndMooringsFromPort(routeParams.portId);
+    dimensionsOptions.value = await MooringDimensionsService.getAll();
+
   }
 
   const addZone = async () => {
     await ZoneService.addZone(zoneName.value, description.value, routeParams.portId);
     await loadPortInfo();
+
+  }
+
+  const addMooring = async () => {
+    console.log(dimensions);
+    console.log(dimensions.value);
+    console.log(dimensions.value.value);
+
+      const mooring = new MooringCreate(mooringNumber.value, zonaAddMooring.value.value,dimensions.value.value );
+      await MooringService.save(mooring, routeParams.portId);
+      await loadPortInfo();
 
   }
 
@@ -51,7 +89,7 @@ const pagination = ref({
 </script>
 
 <template>
-  <q-page>
+  <q-page >
 
 
     <q-markup-table>
@@ -73,43 +111,116 @@ const pagination = ref({
       </tbody>
     </q-markup-table>
 
-    <h3>Zones: </h3>
-
+    <h3>Zonas: </h3>
     <q-tr>
-      <q-td class="text-center">
-        Name
-      </q-td>
-      <q-td class="text-center">
-        Description
-      </q-td>
-      <q-td>
-      </q-td>
+      <q-td colspan="3">
+        <q-form @submit.prevent="addZone">
 
+          <q-card
+            flat
+            bordered
+            class="q-pa-md bg-white"
+            style="border-radius: 12px;"
+          >
+            <p>Añadir zona:</p>
+            <div class="row q-col-gutter-md items-end">
+
+              <div class="col-5">
+                <q-input
+                  v-model="zoneName"
+                  label="Zone Name"
+                  dense
+                  outlined
+                  clearable
+                />
+              </div>
+
+              <div class="col-5">
+                <q-input
+                  v-model="description"
+                  label="Zone Description"
+                  dense
+                  outlined
+                  clearable
+                />
+              </div>
+
+              <div class="col-2 flex flex-end">
+                <q-btn
+                  color="positive"
+                  label="Add"
+                  type="submit"
+                  unelevated
+                  class="full-width"
+                />
+              </div>
+
+            </div>
+          </q-card>
+        </q-form>
+      </q-td>
     </q-tr>
 
-    <q-tr>
-      <q-td>
-        <q-input v-model="zoneName" type="text" dense />
-      </q-td>
-      <q-td>
-        <q-input v-model="description" type="text" dense />
-      </q-td>
-      <q-td>
-        <q-btn
-          color="positive"
-          label="ADD"
-          @click="addZone"
-          dense
-        />
-      </q-td>
 
-    </q-tr>
+        <q-form @submit.prevent="addMooring">
+
+          <q-card
+            flat
+            bordered
+            class="q-pa-md bg-white"
+            style="border-radius: 12px;"
+          >
+            <p>Añadir amarre:</p>
+            <div class="row q-col-gutter-md items-end">
+
+              <div class="col-5">
+                <q-input
+                  v-model="mooringNumber"
+                  label="Mooring number"
+                  dense
+                  outlined
+                  clearable
+                />
+              </div>
+
+              <div class="col-5">
+                <q-select
+                  :options="optionsDimensionsMap"
+                  v-model="dimensions"
+                  label="Mooring dimensions: length x bream x draft"
+                  dense
+                />
+              </div>
+
+              <div class="col-5">
+                <q-select
+                  :options="zonesMap"
+                  v-model="zonaAddMooring"
+                  label="Zona"
+                  dense
+                />
+              </div>
+
+              <div class="col-2 flex flex-end">
+                <q-btn
+                  color="positive"
+                  label="Add"
+                  type="submit"
+                  unelevated
+                  class="full-width"
+                />
+              </div>
+
+            </div>
+          </q-card>
+        </q-form>
+
 
     <q-expansion-item v-for="zone in zones" :key="zone.id"
                       expand-separator
                       icon="perm_identity"
-                      :label="zone.description"
-                      :caption="zone.name"
+                      :label="zone.name"
+                      :caption="zone.description"
     >
       <q-card>
         <q-table
