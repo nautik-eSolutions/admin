@@ -71,12 +71,23 @@ const optionsDimensionsMap = computed(() =>
 
   }
 
+  const deleteMooring = async (id) => {
+     await  MooringService.delete(id);
+     await loadPortInfo();
+  }
+
+  const deleteZone = async (id) => {
+    await ZoneService.delete(id, routeParams.portId);
+    await loadPortInfo();
+  }
+
 
 const columnsMoorings = [
   { name: 'id', label: 'ID', field: 'id', align: 'center' },
   { name: 'number', label: 'NUMBER', field: 'number', align: 'center' },
   { name: 'length', label: 'LENGTH', field: 'length', align: 'center' },
-  { name: 'beam', label: 'BEAM', field: 'beam', align: 'center' }
+  { name: 'beam', label: 'BEAM', field: 'beam', align: 'center' },
+  { name: 'actions', label: 'ACTIONS', field: 'actions', align: 'center' }
 ]
 
 
@@ -223,7 +234,15 @@ const pagination = ref({
                       :caption="zone.description"
     >
       <q-card>
-        <q-table
+
+        <q-btn v-if="zone._moorings.length <= 0"
+            color="negative"
+            label="DELETE"
+            dense
+            @click="deleteZone(zone.id)"
+        />
+
+        <q-table v-if="zone._moorings.length > 0"
           title="Moorings"
           :rows="zone._moorings"
           :columns="columnsMoorings"
@@ -231,7 +250,18 @@ const pagination = ref({
           v-model:pagination="pagination"
           :rows-per-page-options="[5, 10, 20]"
           class="cursor-pointer"
-        />
+        >
+          <template v-slot:body-cell-actions="props">
+            <q-td align="center">
+              <q-btn
+                color="negative"
+                label="DELETE"
+                dense
+                @click="deleteMooring(props.row.id)"
+              />
+            </q-td>
+          </template>
+        </q-table>
 
       </q-card>
     </q-expansion-item>

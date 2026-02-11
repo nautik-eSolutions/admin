@@ -43,4 +43,12 @@ export class ZoneService{
     }
 
   }
+
+  static async delete(zoneId, portId){
+    try {
+      await api.delete(`/api/v1/ports/${portId}/zones/${zoneId}`);
+    } catch(error){
+      console.log("Error: "+error);
+    }
+  }
 }

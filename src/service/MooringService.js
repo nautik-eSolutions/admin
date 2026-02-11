@@ -13,4 +13,13 @@ export class MooringService {
     }
 
   }
+
+  static async delete(mooringId) {
+    try {
+      await api.delete(`/api/v1/moorings/${mooringId}`);
+    }catch(error) {
+      console.log(error);
+    }
+  }
 }
+

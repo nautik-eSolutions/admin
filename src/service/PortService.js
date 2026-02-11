@@ -22,4 +22,22 @@ export class PortService {
       console.error("Error:", error);
     }
   }
+
+  static async delete(id) {
+    try {
+      await api.delete(`/api/v1/ports/${id}`);
+    }catch(error){
+      console.error("Error:", error);
+    }
+  }
+
+  static async add(port) {
+    try {
+      const response = await api.post(`/api/v1/ports`, port);
+      return response.data;
+    } catch (error) {
+      console.error("Error:", error);
+      return [];
+    }
+  }
 }
