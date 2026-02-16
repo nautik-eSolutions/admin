@@ -12,7 +12,7 @@ const routes = [
     component: () => import('pages/LoginNautik.vue'),
   },
   {
-    path: '/barcos',
+    path: '/boats',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/BoatList.vue') }
@@ -30,6 +30,14 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/PortInfo.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/occupancy`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/OccupancyDisplay.vue') }
     ],
     meta: {requiresAuth: true}
   },

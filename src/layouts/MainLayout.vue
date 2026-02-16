@@ -56,12 +56,12 @@ const linksList = [
     link: '/reservas/entrantes'
   },
   {
-    title: 'Ocupación',
+    title: 'occupancy',
     icon: '',
-    link: '/ocupacion'
+    link: '/occupancy'
   },
   {
-    title: 'Barcos',
+    title: 'boats',
     icon: '',
     link: '/barcos'
   },
@@ -90,16 +90,12 @@ export default defineComponent({
   },
 
   setup () {
-    const leftDrawerOpen = ref(false)
 
 
 
     return {
       linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+
     }
   }
 })
@@ -111,12 +107,15 @@ import useAuth from '../stores/auth.js'
 
 const router = useRouter();
 const auth = useAuth();
+const leftDrawerOpen = ref(false)
 
 if(!auth.isAuthenticated){
    router.push('/login')
 }
 
-
+function toggleLeftDrawer () {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
 
 const onSubmit = () => {
 
