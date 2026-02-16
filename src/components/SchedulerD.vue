@@ -6,6 +6,7 @@
   :days="days"
   :resources="resources"
   :events="events"
+  height="100vh"
   />
 </template>
 
@@ -22,13 +23,17 @@ const days = computed(() => startDate.value.daysInYear())
 const resources = ref([])
 const events = ref([])
 const moorings = ref()
-onMounted(()=>{
-  moorings.value = mooringStore.getMoorings(1)
-  resources.value=[
-    {name:'196',id:"m3"},
-    {name:'193',id:"m2"},
-    {name:'239',id:"m1"}
-  ]
+onMounted(async ()=>{
+
+  moorings.value = await mooringStore.getMoorings(1)
+  console.log(moorings)
+
+  resources.value= moorings.value.map(mooring=>{
+    return {
+      name:mooring.number,
+      id:mooring.id
+    }
+  })
 
   events.value = [
     {
