@@ -12,14 +12,18 @@
 <script setup>
 import {DayPilot, DayPilotScheduler} from '@daypilot/daypilot-lite-vue';
 import {computed, onMounted, ref} from "vue";
+import {useMooring} from "stores/mooring.js";
+
+const mooringStore = useMooring();
 const startDate = ref(DayPilot.Date.today().firstDayOfMonth())
 const days = computed(() => startDate.value.daysInYear())
 
 
 const resources = ref([])
 const events = ref([])
-
+const moorings = ref()
 onMounted(()=>{
+  moorings.value = mooringStore.getMoorings(1)
   resources.value=[
     {name:'196',id:"m3"},
     {name:'193',id:"m2"},

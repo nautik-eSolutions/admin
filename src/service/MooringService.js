@@ -23,3 +23,8 @@ export class MooringService {
   }
 }
 
+
+export async function  getMoorings(portId){
+  const response =  await api.get(`moorings/ports/${portId}`)
+  return response
+}
