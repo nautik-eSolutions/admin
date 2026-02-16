@@ -14,19 +14,22 @@
 import {DayPilot, DayPilotScheduler} from '@daypilot/daypilot-lite-vue';
 import {computed, onMounted, ref} from "vue";
 import {useMooring} from "stores/mooring.js";
+import {useBookingStore} from "stores/booking.js";
 
 const mooringStore = useMooring();
+const bookingStore = useBookingStore();
+
 const startDate = ref(DayPilot.Date.today().firstDayOfMonth())
 const days = computed(() => startDate.value.daysInYear())
-
 
 const resources = ref([])
 const events = ref([])
 const moorings = ref()
+const bookings =  ref();
 onMounted(async ()=>{
-
+  bookings.value = await bookingStore.getAllBookings(1)
   moorings.value = await mooringStore.getMoorings(1)
-  console.log(moorings)
+  console.log(bookings)
 
   resources.value= moorings.value.map(mooring=>{
     return {
