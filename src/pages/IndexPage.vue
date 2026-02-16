@@ -2,9 +2,10 @@
   <q-page class="flex flex-center">
     <img
       alt="Quasar logo"
-      src="~assets/quasar-logo-vertical.svg"
-      style="width: 200px; height: 200px"
+      src="~assets/nautik-logo.svg"
+      style="width: 700px; height: 700px"
     >
+
   </q-page>
 </template>
 

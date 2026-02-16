@@ -12,10 +12,10 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          NAUTIK enterprise
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <q-btn push color="red" label="Logout"  @click="onSubmit"/>
       </q-toolbar>
     </q-header>
 
@@ -51,46 +51,34 @@ import EssentialLink from 'components/EssentialLink.vue'
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
+    title: 'Reservas entrantes',
+    icon: '',
+    link: '/reservas/entrantes'
   },
   {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
+    title: 'Ocupación',
+    icon: '',
+    link: '/ocupacion'
   },
   {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
+    title: 'Barcos',
+    icon: '',
+    link: '/barcos'
   },
   {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
+    title: 'Estados amarres',
+    icon: '',
+    link: '/estados'
   },
   {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
+    title: 'Modificar reservas',
+    icon: '',
+    link: '/reservas/modificar'
   },
   {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
+    title: 'Puertos',
+    icon: '',
+    link: '/ports'
   }
 ]
 
@@ -104,6 +92,8 @@ export default defineComponent({
   setup () {
     const leftDrawerOpen = ref(false)
 
+
+
     return {
       linksList,
       leftDrawerOpen,
@@ -113,4 +103,25 @@ export default defineComponent({
     }
   }
 })
+</script>
+<script setup>
+
+import {useRouter} from "vue-router";
+import useAuth from '../stores/auth.js'
+
+const router = useRouter();
+const auth = useAuth();
+
+if(!auth.isAuthenticated){
+   router.push('/login')
+}
+
+
+
+const onSubmit = () => {
+
+   auth.logout()
+    router.push('/login')
+
+}
 </script>
