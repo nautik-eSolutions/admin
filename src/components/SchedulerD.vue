@@ -38,6 +38,17 @@ onMounted(async ()=>{
     }
   })
 
+  events.value = bookings.value.map(booking=>{
+    return{
+      id:booking.id,
+      start:booking.startDate,
+      end:booking.endDate,
+      resource:booking.mooringId,
+      text:`Reserva ${booking.id}`
+    }
+  })
+
+  /*
   events.value = [
     {
       id: 1,
@@ -59,7 +70,7 @@ onMounted(async ()=>{
         color: "#6fa8dc"
       }
     }]
-
+*/
 })
 
 
