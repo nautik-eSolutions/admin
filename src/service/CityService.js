@@ -6,7 +6,7 @@ export class CityService {
 
   static async getAll() {
     try {
-      const cities = await api.get(`/api/v1/locations/cities`);
+      const cities = await api.get(`locations/cities`);
       console.log(cities)
       return cities.data.map(item => City.fromJson(item));
     } catch (error) {

@@ -5,7 +5,7 @@ export class UserService {
 
   static async getAll() {
     try {
-      const response = await api.get('/api/v1/users');
+      const response = await api.get('users');
       return response.data.map(item => User.fromJson(item));
     } catch (error) {
       console.error("Error:", error);

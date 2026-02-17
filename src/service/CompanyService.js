@@ -6,7 +6,7 @@ export class CompanyService {
 
   static async getAll() {
     try {
-      const companies = await api.get(`/api/v1/companies`);
+      const companies = await api.get(`companies`);
       console.log(companies)
       return companies.data.map(item => Company.fromJson(item));
     } catch (error) {
