@@ -1,13 +1,13 @@
 <script setup>
 import { ref } from 'vue'
-import useAuth from '../stores/auth.js'
+import {useAuthStore} from '../stores/auth.js'
 import {useRouter} from "vue-router";
 
 
 
 const username = ref('')
 const password = ref('')
-const auth = useAuth();
+const auth = useAuthStore();
 const router = useRouter();
 
 

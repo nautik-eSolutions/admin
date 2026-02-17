@@ -5,7 +5,7 @@ import {loginUser} from "src/service/AuthService.js";
 
 
 
-export default defineStore('myStore', {
+export const useAuthStore =  defineStore('myStore', {
   state: () => {
     return {
       User: User,

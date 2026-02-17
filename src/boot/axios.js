@@ -1,7 +1,6 @@
 import { defineBoot } from '#q-app/wrappers'
-import useAuth from '../stores/auth.js'
 import axios from 'axios'
-
+import {useAuthStore} from "stores/auth.js";
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -13,7 +12,7 @@ const api = axios.create({ baseURL: 'http://localhost:8089/api/v1' })
 export default defineBoot(({ app }) => {
 
   api.interceptors.request.use(config => {
-    const authStore = useAuth()
+    const authStore = useAuthStore()
     if (authStore.token) {
       console.log(authStore.token)
       config.headers.Authorization = `Bearer ${authStore.token}`

@@ -103,10 +103,10 @@ export default defineComponent({
 <script setup>
 
 import {useRouter} from "vue-router";
-import useAuth from '../stores/auth.js'
+import {useAuthStore} from '../stores/auth.js'
 
 const router = useRouter();
-const auth = useAuth();
+const auth = useAuthStore();
 const leftDrawerOpen = ref(false)
 
 if(!auth.isAuthenticated){
