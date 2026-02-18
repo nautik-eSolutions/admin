@@ -28,7 +28,7 @@
         <q-item-label
           header
         >
-          Essential Links
+          Menú
         </q-item-label>
 
         <EssentialLink
@@ -53,27 +53,27 @@ const linksList = [
   {
     title: 'Reservas entrantes',
     icon: '',
-    link: '/reservas/entrantes'
+    link: '/bookings/incoming'
   },
   {
-    title: 'occupancy',
+    title: 'Ocupación',
     icon: '',
     link: '/occupancy'
   },
   {
-    title: 'boats',
+    title: 'Barcos',
     icon: '',
-    link: '/barcos'
+    link: '/boats'
   },
   {
-    title: 'Estados amarres',
+    title: 'Estado amarres',
     icon: '',
-    link: '/estados'
+    link: '/states/moorings'
   },
   {
     title: 'Modificar reservas',
     icon: '',
-    link: '/reservas/modificar'
+    link: '/bookings/edit'
   },
   {
     title: 'Puertos',
