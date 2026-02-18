@@ -1,11 +1,14 @@
 <script setup>
 
+
+
 </script>
 
 <template>
-  <q-form>
+  <div class="q-">
+  <q-input class="w-2" label="userName"/>
 
-  </q-form>
+  </div>
 </template>
 
 <style scoped>
