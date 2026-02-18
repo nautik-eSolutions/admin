@@ -2,12 +2,10 @@ import {api} from "boot/axios.js";
 
 
 export async function loginUser(userName,password) {
-  const response = await api.post('auth/login', {
+  return await api.post('auth/login/administrator', {
     "userName": userName,
     "password": password,
   })
-    .then((resp) => resp)
-
-  return response ;
+    .then((resp) => resp) ;
 
 }

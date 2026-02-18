@@ -5,6 +5,7 @@ import autoprefixer from 'autoprefixer'
 
 export default {
   plugins: [
+    require('tailwindcss'),
     // https://github.com/postcss/autoprefixer
     autoprefixer({
       overrideBrowserslist: [

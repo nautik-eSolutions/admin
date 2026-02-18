@@ -31,11 +31,14 @@
           Menú
         </q-item-label>
 
+        <template v-if="linksList">
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
           v-bind="link"
         />
+        </template>
+
       </q-list>
     </q-drawer>
 
@@ -49,39 +52,6 @@
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 
-const linksList = [
-  {
-    title: 'Reservas entrantes',
-    icon: '',
-    link: '/bookings/incoming'
-  },
-  {
-    title: 'Ocupación',
-    icon: '',
-    link: '/occupancy'
-  },
-  {
-    title: 'Barcos',
-    icon: '',
-    link: '/boats'
-  },
-  {
-    title: 'Estado amarres',
-    icon: '',
-    link: '/states/moorings'
-  },
-  {
-    title: 'Modificar reservas',
-    icon: '',
-    link: '/bookings/edit'
-  },
-  {
-    title: 'Puertos',
-    icon: '',
-    link: '/ports'
-  }
-]
-
 export default defineComponent({
   name: 'MainLayout',
 
@@ -94,7 +64,7 @@ export default defineComponent({
 
 
     return {
-      linksList,
+
 
     }
   }
@@ -108,6 +78,7 @@ import {useAuthStore} from '../stores/auth.js'
 const router = useRouter();
 const auth = useAuthStore();
 const leftDrawerOpen = ref(false)
+const linksList = auth.getLinksList();
 
 if(!auth.isAuthenticated){
    router.push('/login')
