@@ -3,62 +3,6 @@ import User from "src/model/User.js";
 import {loginUser} from "src/service/AuthService.js";
 
 
-const AdminCompanyLinkList =  [
-  {
-    title: 'Reservas entrantes',
-    icon: '',
-    link: '/bookings/incoming'
-  },
-  {
-    title: 'Ocupación',
-    icon: '',
-    link: '/occupancy'
-  },
-  {
-    title: 'Estado amarres',
-    icon: '',
-    link: '/states/moorings'
-  },
-  {
-    title: 'Modificar reservas',
-    icon: '',
-    link: '/bookings/edit'
-  },
-  {
-    title: 'Puertos',
-    icon: '',
-    link: '/ports'
-  },
-  {
-    title: 'Gestión de usuarios',
-    icon: '',
-    link:'/users'
-  }
-]
-const PortAdminLinkList = [
-  {
-    title: 'Reservas entrantes',
-    icon: '',
-    link: '/bookings/incoming'
-  },
-  {
-    title: 'Ocupación',
-    icon: '',
-    link: '/occupancy'
-  },
-  {
-    title: 'Estado amarres',
-    icon: '',
-    link: '/states/moorings'
-  },
-  {
-    title: 'Modificar reservas',
-    icon: '',
-    link: '/bookings/edit'
-  }
-]
-
-
 export const useAuthStore =  defineStore('myStore', {
   state: () => {
     return {
@@ -79,16 +23,7 @@ export const useAuthStore =  defineStore('myStore', {
         this.isAuthenticated =  true;
       }
     },
-    getLinksList(){
-      switch (this.role){
-        case "ADMIN_COMPANY" :
-          return AdminCompanyLinkList;
-        case "ADMIN_PORT":
-          return PortAdminLinkList;
 
-      }
-    }
-    ,
     async logout(){
       this.User = null
       this.token = ''

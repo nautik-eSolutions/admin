@@ -31,9 +31,9 @@
           Menú
         </q-item-label>
 
-        <template v-if="linksList">
+        <template v-if="linklist">
         <EssentialLink
-          v-for="link in linksList"
+          v-for="link in linklist"
           :key="link.title"
           v-bind="link"
         />
@@ -78,7 +78,74 @@ import {useAuthStore} from '../stores/auth.js'
 const router = useRouter();
 const auth = useAuthStore();
 const leftDrawerOpen = ref(false)
-const linksList = auth.getLinksList();
+
+const AdminCompanyLinkList = ref([
+  {
+    title: 'Reservas entrantes',
+    icon: '',
+    link: '/bookings/incoming'
+  },
+  {
+    title: 'Ocupación',
+    icon: '',
+    link: '/occupancy'
+  },
+  {
+    title: 'Estado amarres',
+    icon: '',
+    link: '/states/moorings'
+  },
+  {
+    title: 'Modificar reservas',
+    icon: '',
+    link: '/bookings/edit'
+  },
+  {
+    title: 'Puertos',
+    icon: '',
+    link: '/ports'
+  },
+  {
+    title: 'Gestión de usuarios',
+    icon: '',
+    link:'/users'
+  }
+])
+const PortAdminLinkList =ref( [
+  {
+    title: 'Reservas entrantes',
+    icon: '',
+    link: '/bookings/incoming'
+  },
+  {
+    title: 'Ocupación',
+    icon: '',
+    link: '/occupancy'
+  },
+  {
+    title: 'Estado amarres',
+    icon: '',
+    link: '/states/moorings'
+  },
+  {
+    title: 'Modificar reservas',
+    icon: '',
+    link: '/bookings/edit'
+  }
+])
+
+const linklist = getLinksList();
+
+function getLinksList(){
+  switch (auth.role){
+    case "ADMIN_COMPANY" :
+      return AdminCompanyLinkList;
+    case "ADMIN_PORT":
+      return PortAdminLinkList;
+
+  }
+}
+
 
 if(!auth.isAuthenticated){
    router.push('/login')
