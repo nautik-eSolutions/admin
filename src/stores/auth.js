@@ -3,38 +3,6 @@ import User from "src/model/User.js";
 import {loginUser} from "src/service/AuthService.js";
 
 
-const linksList = [
-  {
-    title: 'Reservas entrantes',
-    icon: '',
-    link: '/bookings/incoming'
-  },
-  {
-    title: 'Ocupación',
-    icon: '',
-    link: '/occupancy'
-  },
-  {
-    title: 'Barcos',
-    icon: '',
-    link: '/boats'
-  },
-  {
-    title: 'Estado amarres',
-    icon: '',
-    link: '/states/moorings'
-  },
-  {
-    title: 'Modificar reservas',
-    icon: '',
-    link: '/bookings/edit'
-  },
-  {
-    title: 'Puertos',
-    icon: '',
-    link: '/ports'
-  }
-]
 const AdminCompanyLinkList =  [
   {
     title: 'Reservas entrantes',
@@ -47,11 +15,6 @@ const AdminCompanyLinkList =  [
     link: '/occupancy'
   },
   {
-    title: 'Barcos',
-    icon: '',
-    link: '/boats'
-  },
-  {
     title: 'Estado amarres',
     icon: '',
     link: '/states/moorings'
@@ -65,6 +28,11 @@ const AdminCompanyLinkList =  [
     title: 'Puertos',
     icon: '',
     link: '/ports'
+  },
+  {
+    title: 'Gestión de usuarios',
+    icon: '',
+    link:'/users'
   }
 ]
 const PortAdminLinkList = [
@@ -79,11 +47,6 @@ const PortAdminLinkList = [
     link: '/occupancy'
   },
   {
-    title: 'Barcos',
-    icon: '',
-    link: '/boats'
-  },
-  {
     title: 'Estado amarres',
     icon: '',
     link: '/states/moorings'
@@ -92,11 +55,6 @@ const PortAdminLinkList = [
     title: 'Modificar reservas',
     icon: '',
     link: '/bookings/edit'
-  },
-  {
-    title: 'Puertos',
-    icon: '',
-    link: '/ports'
   }
 ]
 
@@ -125,7 +83,7 @@ export const useAuthStore =  defineStore('myStore', {
       switch (this.role){
         case "ADMIN_COMPANY" :
           return AdminCompanyLinkList;
-        case "PORT_ADMIN":
+        case "ADMIN_PORT":
           return PortAdminLinkList;
 
       }
