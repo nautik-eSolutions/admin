@@ -17,9 +17,10 @@ export default defineStore('myStore', {
   actions: {
     async loginUser(userName, password) {
       const resp = await loginUser(userName, password)
+      console.log(resp)
       if (resp.status === 200) {
         this.User =  new User(userName)
-        this.token =  resp.data.token
+        this.token =  resp.data.token.token
         this.isAuthenticated =  true;
       }
     }

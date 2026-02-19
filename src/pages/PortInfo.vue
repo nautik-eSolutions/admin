@@ -41,6 +41,7 @@ const optionsDimensionsMap = computed(() =>
   const dimensions = ref();
   const dimensionsOptions = ref([]);
   const zonaAddMooring = ref();
+  //const numberOfMoorings = ref();
 
   onMounted(() => {
     loadPortInfo()
@@ -56,18 +57,19 @@ const optionsDimensionsMap = computed(() =>
 
   const addZone = async () => {
     await ZoneService.addZone(zoneName.value, description.value, routeParams.portId);
+    zoneName.value = "";
+    description.value = "";
     await loadPortInfo();
 
   }
 
   const addMooring = async () => {
-    console.log(dimensions);
-    console.log(dimensions.value);
-    console.log(dimensions.value.value);
-
       const mooring = new MooringCreate(mooringNumber.value, zonaAddMooring.value.value,dimensions.value.value );
       await MooringService.save(mooring, routeParams.portId);
       await loadPortInfo();
+      mooringNumber.value = "";
+      zonaAddMooring.value = "";
+      dimensions.value = "";
 
   }
 
@@ -226,6 +228,73 @@ const pagination = ref({
           </q-card>
         </q-form>
 
+    <!--
+
+    <q-form @submit.prevent="addMooring">
+
+      <q-card
+        flat
+        bordered
+        class="q-pa-md bg-white"
+        style="border-radius: 12px;"
+      >
+        <p>Añadir amarre:</p>
+        <div class="row q-col-gutter-md items-end">
+
+          <div class="col-5">
+            <q-input
+              v-model="mooringNumber"
+              type="number"
+              label="Mooring start number"
+              dense
+              outlined
+              clearable
+            />
+          </div>
+
+          <div class="col-5">
+            <q-input
+              v-model="numberOfMoorings"
+              type="number"
+              label="Number of moorings"
+              dense
+              outlined
+              clearable
+            />
+          </div>
+
+          <div class="col-5">
+            <q-select
+              :options="optionsDimensionsMap"
+              v-model="dimensions"
+              label="Mooring dimensions: length x bream x draft"
+              dense
+            />
+          </div>
+
+          <div class="col-5">
+            <q-select
+              :options="zonesMap"
+              v-model="zonaAddMooring"
+              label="Zona"
+              dense
+            />
+          </div>
+
+          <div class="col-2 flex flex-end">
+            <q-btn
+              color="positive"
+              label="Add"
+              type="submit"
+              unelevated
+              class="full-width"
+            />
+          </div>
+
+        </div>
+      </q-card>
+    </q-form>
+-->
 
     <q-expansion-item v-for="zone in zones" :key="zone.id"
                       expand-separator
