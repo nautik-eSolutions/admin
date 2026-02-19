@@ -10,7 +10,6 @@ const userStore = useUserStore();
 onMounted(async () => {
   ports.value = await PortService.getAll();
 
-  console.log(ports)
 })
 
  function handleSubmit(){

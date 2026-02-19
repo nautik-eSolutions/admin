@@ -24,11 +24,24 @@ export class ZoneService{
   static async getAllZonesAndMooringsFromPort(portId){
     try{
       const responseZones = await api.get(`ports/${portId}/zones`);
+
       const zones = responseZones.data.map(item => Zone.fromJson(item));
       for (const zone of zones) {
         zone.setMoorings( (await api.get(`moorings/zone/${zone.id}`)).data.map(item => Mooring.fromJson(item)));
+
       }
+
       return zones;
+    }catch(error){
+      console.log("Error: "+error);
+    }
+  }
+
+
+  static async getAllZonesFromAPort(portId){
+    try{
+      const responseZones = await api.get(`ports/${portId}/zones`);
+      return responseZones.data.map(item => Zone.fromJson(item))
     }catch(error){
       console.log("Error: "+error);
     }

@@ -57,12 +57,11 @@ const addZone = async () => {
   await ZoneService.addZone(zoneName.value, description.value, routeParams.portId);
   await loadPortInfo();
 
+
 }
 
 const addMooring = async () => {
-  console.log(dimensions);
-  console.log(dimensions.value);
-  console.log(dimensions.value.value);
+
 
   const mooring = new MooringCreate(mooringNumber.value, zonaAddMooring.value.value, dimensions.value.value);
   await MooringService.save(mooring, routeParams.portId);
@@ -99,6 +98,7 @@ const pagination = ref({
 </script>
 
 <template>
+  <template v-if="loadPortInfo">
   <q-page>
 
 
@@ -125,7 +125,6 @@ const pagination = ref({
     <q-tr>
       <q-td colspan="3">
         <q-form @submit.prevent="addZone">
-
           <q-card
             flat
             bordered
@@ -264,9 +263,9 @@ const pagination = ref({
 
       </q-card>
     </q-expansion-item>
-
-
+    >
   </q-page>
+  </template>
 </template>
 
 <style scoped>

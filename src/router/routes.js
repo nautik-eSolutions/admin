@@ -50,6 +50,15 @@ const routes = [
     ],
     meta: {requiresAuth: true}
   },
+  {
+    path: `/zones`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ZonePage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+
 
 
   // Always leave this as last one,
