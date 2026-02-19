@@ -4,14 +4,6 @@ import {Mooring} from "src/model/Mooring.js";
 import {ZoneCreate} from "src/model/Create/ZoneCreate.js";
 
 export class ZoneService{
-  static async getAllFromPort(portId){
-      try {
-        const response = await api.get(`/ports/${portId}/zones`);
-        return response.data.map(item => Zone.fromJson(item));
-      }catch(error){
-        console.log("Error: "+error);
-      }
-  }
   static async getAllMooringsFromZoneId(zoneId){
     try {
       const response = await api.get(`moorings/zone/${zoneId}`);
@@ -23,7 +15,7 @@ export class ZoneService{
 
   static async getAllZonesAndMooringsFromPort(portId){
     try{
-      const responseZones = await api.get(`ports/${portId}/zones`);
+      const responseZones = await api.get(`/zones/port/${portId}`);
 
       const zones = responseZones.data.map(item => Zone.fromJson(item));
       for (const zone of zones) {
@@ -40,7 +32,7 @@ export class ZoneService{
 
   static async getAllZonesFromAPort(portId){
     try{
-      const responseZones = await api.get(`ports/${portId}/zones`);
+      const responseZones = await api.get(`/zones/port/${portId}`);
       return responseZones.data.map(item => Zone.fromJson(item))
     }catch(error){
       console.log("Error: "+error);
@@ -50,16 +42,35 @@ export class ZoneService{
   static async addZone(name, description, portId){
     try{
       const dto = new ZoneCreate(name, description);
-      return await api.post(`ports/${portId}/zones`, dto);
+      return await api.post(`/zones/port/${portId}`, dto);
     } catch(error){
       console.log("Error: "+error);
     }
 
   }
+  static async updateZone(name, description, portId){
+    try{
+      const dto = new ZoneCreate(name, description);
+      return await api.put(`/zones/port/${portId}`, dto);
+    } catch(error){
+      console.log("Error: "+error);
+    }
+
+  }
+  static async getZoneById(id){
+    try {
+      const resp = await api.get(`zones/${id}`).then(resp=>resp.data)
+      return Zone.fromJson(resp)
+    }catch (error){
+      console.log("Error: "+ error)
+    }
+  }
+
+
 
   static async delete(zoneId, portId){
     try {
-      await api.delete(`ports/${portId}/zones/${zoneId}`);
+      await api.delete(`zones/${zoneId}`);
     } catch(error){
       console.log("Error: "+error);
     }

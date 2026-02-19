@@ -1,78 +1,80 @@
 <script setup>
-import {ref, computed, onMounted} from 'vue'
-import { useRouter } from 'vue-router'
-import {PortService} from "src/service/PortService.js";
+import {onMounted, ref} from 'vue'
+import {useRoute, useRouter} from "vue-router";
 import {ZoneService} from "src/service/ZoneService.js";
+import {useMooring} from "stores/mooring.js";
 
-const router = useRouter()
+const params = useRoute().params;
+const mooringStore = useMooring();
 
-const port=ref();
-const ports = ref();
-const zones = ref();
-onMounted(async () => {
-  ports.value = await PortService.getAll();
+const zoneId = params.id;
+const zone = ref();
+const moorings =  ref();
+onMounted(async()=>{
+  zone.value = await ZoneService.getZoneById(zoneId);
+  moorings.value = await mooringStore.getMooringByZoneId(zoneId)
 })
-async function getZones(port) {
-zones.value = await ZoneService.getAllZonesFromAPort(port.value);
-}
 
 const columns = [
   {
-    name: 'name',
+    name: 'numero',
     required: true,
-    label: 'Zona',
+    label: 'Nº Amarre',
     align: 'left',
-    field: 'name',
+    field: row => row.number,
     sortable: true
-  }
+  },
+  {
+    name: 'dimensiones',
+    align: 'center',
+    label: 'Dimensiones',
+    field: row => `${row.length}m x ${row.beam}m`,
+    sortable: true
+  },
+
 ]
 
-
-function handleClick(zone) {
-  router.push('/zone/'+zone.id)
-}
+const pagination = ref({
+  rowsPerPage: 5
+})
 </script>
 
-
-
 <template>
-  <q-page class="q-pa-md">
-    <div class="row q-col-gutter-md">
-      <div v-if="ports" class="col-12 col-md-4">
-        <q-select
-          v-model="port"
-          :options="ports.map(port=> {return {label:port.name, value:port.id}})"
-          label="Selecciona un puerto"
-          @update:modelValue="getZones"
-        />
-      </div>
-      <div class="col-12" v-if="zones">
-        <q-table
-          title="Zonas"
-          :rows="zones"
-          :columns="columns"
-          row-key="id"
-          flat
-          bordered
-        >
-          <template v-slot:body-cell-name="props">
-            <q-td :props="props">
-              <q-btn
-                flat
-                class="hover:border-gray-100"
-                color="primary"
-                :label="props.row.name"
-                @click="handleClick(props.row)"
-              />
-            </q-td>
-          </template>
-        </q-table>
-      </div>
+  <q-page padding>
+    <div class="q-pa-md q-mt-md">
+      <q-card flat bordered class="my-card q-mb-xl">
 
+        <q-card-section>
+          <template v-if="zone">
+          <div class="text-h5 text-primary">{{ zone.name }}</div>
+          <div class="text-subtitle2 text-grey-8">{{ zone.description }}</div>
+          </template>
+        </q-card-section>
+
+      </q-card>
+
+     <template v-if="moorings">
+      <q-table
+        title="Lista de amarres"
+        :rows="moorings"
+        :columns="columns"
+        row-key="id"
+        flat
+        bordered
+        :pagination="pagination"
+      >
+      </q-table>
+     </template>
     </div>
   </q-page>
 </template>
 
 
+
 <style scoped>
+.my-card {
+  width: 100%;
+  max-width: 20rem;
+
+}
 </style>

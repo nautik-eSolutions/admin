@@ -1,7 +1,6 @@
 import {api} from "boot/axios.js";
 
 
-
 export class MooringService {
   static async save(mooring, portId) {
     try {
@@ -25,6 +24,10 @@ export class MooringService {
 
 
 export async function  getMoorings(portId){
-  const response =  await api.get(`moorings/ports/${portId}`)
-  return response
+  return await api.get(`moorings/ports/${portId}`)
+}
+
+
+export async function getMooringByZoneId(zoneId){
+  return await api.get(`moorings/zone/${zoneId}`)
 }

@@ -54,6 +54,14 @@ const routes = [
     path: `/zones`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
+      { path: '', component: () => import('pages/ZonesPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/zones/:id`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
       { path: '', component: () => import('pages/ZonePage.vue') }
     ],
     meta: {requiresAuth: true}

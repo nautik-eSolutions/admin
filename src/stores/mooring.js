@@ -1,5 +1,5 @@
 import {defineStore} from 'pinia';
-import {getMoorings} from "src/service/MooringService.js";
+import {getMooringByZoneId, getMoorings} from "src/service/MooringService.js";
 import {Mooring} from "src/model/Mooring.js";
 
 
@@ -18,7 +18,17 @@ export const useMooring = defineStore('mooringStore', {
       }
       this.Moorings = resp.data.map(mooring =>this.fromJson(mooring))
       return this.Moorings;
-    },
+      },
+    async getMooringByZoneId(zoneId){
+      const resp =  await getMooringByZoneId(zoneId)
+      if (resp.status=== 200){
+        console.log("recuerda hacer el toast de esto : mooringStore 16")
+        this.Moorings = resp.data.map(mooring =>this.fromJson(mooring))
+        return this.Moorings;
+      }
+
+    }
+  ,
     fromJson(json) {
       return new Mooring(
         json.id,
