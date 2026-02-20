@@ -4,13 +4,14 @@ import {useRoute, useRouter} from "vue-router";
 import {ZoneService} from "src/service/ZoneService.js";
 import {useMooring} from "stores/mooring.js";
 
+
 const params = useRoute().params;
 const mooringStore = useMooring();
-
+const router = useRouter();
 const zoneId = params.id;
 const zone = ref();
-const moorings =  ref();
-onMounted(async()=>{
+const moorings = ref();
+onMounted(async () => {
   zone.value = await ZoneService.getZoneById(zoneId);
   moorings.value = await mooringStore.getMooringByZoneId(zoneId)
 })
@@ -31,12 +32,22 @@ const columns = [
     field: row => `${row.length}m x ${row.beam}m`,
     sortable: true
   },
+  {
+    name: 'edit',
+    label: 'Editar',
+    align: 'center',
+    field: 'edit'}
 
 ]
 
 const pagination = ref({
   rowsPerPage: 5
 })
+
+
+function editMooring(mooring) {
+  router.push(`/moorings/${mooring.id}`)
+}
 </script>
 
 <template>
@@ -46,29 +57,41 @@ const pagination = ref({
 
         <q-card-section>
           <template v-if="zone">
-          <div class="text-h5 text-primary">{{ zone.name }}</div>
-          <div class="text-subtitle2 text-grey-8">{{ zone.description }}</div>
+            <div class="text-h5 text-primary">{{ zone.name }}</div>
+            <div class="text-subtitle2 text-grey-8">{{ zone.description }}</div>
           </template>
         </q-card-section>
 
       </q-card>
 
-     <template v-if="moorings">
-      <q-table
-        title="Lista de amarres"
-        :rows="moorings"
-        :columns="columns"
-        row-key="id"
-        flat
-        bordered
-        :pagination="pagination"
-      >
-      </q-table>
-     </template>
+      <template v-if="moorings">
+        <q-table
+          title="Lista de amarres"
+          :rows="moorings"
+          :columns="columns"
+          row-key="id"
+          flat
+          bordered
+          :pagination="pagination"
+        >
+          <template v-slot:body-cell-edit="props">
+            <q-td :props="props">
+              <q-btn
+                flat
+                round
+                dense
+                icon="edit"
+                @click="editMooring(props.row)"
+              >
+                <q-tooltip>Editar Amarre</q-tooltip>
+              </q-btn>
+            </q-td>
+          </template>
+        </q-table>
+      </template>
     </div>
   </q-page>
 </template>
-
 
 
 <style scoped>

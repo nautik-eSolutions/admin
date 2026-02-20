@@ -26,7 +26,9 @@ export class MooringService {
 export async function  getMoorings(portId){
   return await api.get(`moorings/ports/${portId}`)
 }
-
+export async function getMooringById(id){
+  return await api.get(`moorings/${id}`)
+}
 
 export async function getMooringByZoneId(zoneId){
   return await api.get(`moorings/zone/${zoneId}`)
