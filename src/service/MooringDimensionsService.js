@@ -12,3 +12,16 @@ export class MooringDimensionsService {
     }
   }
 }
+
+export async function getAllMooringDimension(portId){
+  return await api.get(`moorings/ports/${portId}/dimensions`);
+}
+export async function updateMooringDimension(dimension){
+  return await api.patch(`moorings/dimensions`, dimension);
+}
+export async function deleteMooringDimension(id){
+  return await api.delete(`moorings/dimensions/${id}`)
+}
+export async function createMooringDimension(portId){
+  return await api.post(`moorings/ports/${portId}/dimensions`)
+}

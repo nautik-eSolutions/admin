@@ -114,6 +114,11 @@ const AdminCompanyLinkList = ref([
     title: 'Gestión de zonas',
     icon: '',
     link:'/zones'
+  },
+  {
+    title: 'Gestión de dimensiones',
+    icon: '',
+    link:'/dimensions'
   }
 ])
 const PortAdminLinkList =ref( [

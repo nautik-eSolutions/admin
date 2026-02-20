@@ -33,3 +33,4 @@ export async function getMooringById(id){
 export async function getMooringByZoneId(zoneId){
   return await api.get(`moorings/zone/${zoneId}`)
 }
+

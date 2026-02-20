@@ -74,6 +74,14 @@ const routes = [
     ],
     meta: {requiresAuth: true}
   },
+  {
+    path: `/dimensions`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/DimensionsDisplay.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
 
 
 

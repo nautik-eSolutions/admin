@@ -42,8 +42,24 @@ export const useMooring = defineStore('mooringStore', {
 
       return this.Mooring;
 
-    }
+    },
 
+    async updateMooringByID(mooring){
+
+    },
+    async getAllMooringDimension(){
+
+    },
+
+    async createMooringDimension(){
+
+    },
+    async updateMooringDimension(){
+
+    },
+    async deleteMooringDimension(){
+
+    }
   ,
     fromJson(json) {
       return new Mooring(
@@ -51,6 +67,7 @@ export const useMooring = defineStore('mooringStore', {
         json.number,
         json.mooringCategory.dimensionsMaxLength,
         json.mooringCategory.dimensionsMaxBeam,
+        json.mooringCategory.dimensionsMaxDraft
       );
     }
 

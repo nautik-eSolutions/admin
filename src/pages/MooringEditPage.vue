@@ -1,62 +1,31 @@
 <script setup>
-import {onMounted, ref} from 'vue'
-import {useMooring} from "stores/mooring.js";
-import {useRoute} from "vue-router";
-import {useBookingStore} from "stores/booking.js";
-
+import { onMounted, ref } from 'vue'
+import { useMooring } from "stores/mooring.js";
+import { useRoute } from "vue-router";
+import { useBookingStore } from "stores/booking.js";
 
 const mooringStore = useMooring();
 const bookingStore = useBookingStore();
 const params = useRoute().params;
 
-
-const mooring1 = ref({
-  id: 101,
-  number: 'A-01-NORTH',
-  length: 15.00,
-  beam: 5.20
-})
-const mooring = ref();
-const bookings = ref([
-  {
-    id: 1,
-    cliente: 'Juan Pérez',
-    barco: 'Sea Breeze',
-    entrada: '2026-05-10',
-    salida: '2026-05-15',
-    status: 'Confirmada'
-  },
-  {
-    id: 2,
-    cliente: 'Marina S.L.',
-    barco: 'The Kraken',
-    entrada: '2026-06-01',
-    salida: '2026-06-10',
-    status: 'Pendiente'
-  },
-  {id: 3, cliente: 'Elena Smith', barco: 'Liberty', entrada: '2026-07-20', salida: '2026-07-25', status: 'Confirmada'}
-])
-
-const bookingsColumns = [
-  {name: 'cliente', label: 'Cliente', field: 'cliente', align: 'left', sortable: true},
-  {name: 'barco', label: 'Embarcación', field: 'boatId', align: 'left'},
-  {name: 'entrada', label: 'Check-in', field: 'startDate', align: 'center'},
-  {name: 'salida', label: 'Check-out', field: 'endDate', align: 'center'},
-  {name: 'status', label: 'Estado', field: 'status', align: 'center'}
-]
+const mooring = ref(null);
+const bookings = ref([]);
 
 onMounted(async () => {
-  mooring.value = await mooringStore.getMooringById(params.id)
-  console.log(mooring)
+  mooring.value = await mooringStore.getMooringById(params.id);
   bookings.value = await bookingStore.getBookingsByMooring(params.id);
 })
 
-const onSubmit = () => {
+const bookingsColumns = [
+  { name: 'client', label: 'Cliente', field: 'cc', align: 'left', sortable: true },
+  { name: 'boat', label: 'Embarcación', field: 'boatId', align: 'left' },
+  { name: 'startDate', label: 'Check-in', field: 'startDate', align: 'center' },
+  { name: 'endDate', label: 'Check-out', field: 'endDate', align: 'center' },
+  { name: 'status', label: 'Estado', field: 'status', align: 'center' }
+]
 
-}
+
 </script>
-
-
 <template>
   <q-page padding class="bg-grey-1">
     <div class="max-width-container q-mx-auto">
@@ -67,79 +36,55 @@ const onSubmit = () => {
             <template v-if="mooring">
               <div class="row items-baseline q-gutter-sm">
                 <span class="text-h4 text-weight-bold text-grey-9">{{ mooring.number }}</span>
-                <q-badge outline color="primary" label="Amarre Activo"/>
+                <q-badge outline color="primary" label="Amarre Activo" />
               </div>
               <div class="row q-gutter-md q-mt-xs text-subtitle1 text-grey-7">
                 <div class="row items-center">
-                  <q-icon name="straighten" class="q-mr-xs"/>
+                  <q-icon name="straighten" class="q-mr-xs" />
                   Eslora: <span class="text-weight-bold text-grey-10 q-ml-xs">{{ mooring.length }}m</span>
                 </div>
                 <div class="row items-center">
-                  <q-icon name="width_full" class="q-mr-xs"/>
+                  <q-icon name="width_full" class="q-mr-xs" />
                   Manga: <span class="text-weight-bold text-grey-10 q-ml-xs">{{ mooring.beam }}m</span>
+                </div>
+                <div class="row items-center">
+                  <q-icon name="sailing" class="q-mr-xs" />
+                  Calado: <span class="text-weight-bold text-grey-10 q-ml-xs">{{ mooring.draft }}m</span>
                 </div>
               </div>
             </template>
-          </div>
-
-          <div class="col-auto row q-gutter-sm">
-            <q-btn outline color="grey-7" icon="history" label="Historial"/>
-            <q-btn color="primary" icon="save" label="Actualizar Datos" @click="onSubmit"/>
+            <q-skeleton v-else type="rect" width="300px" height="40px" />
           </div>
         </q-card-section>
-
-        <q-separator/>
-        <template v-if="mooring">
-          <q-card-section class="q-pa-lg">
-            <div class="text-overline text-grey-7 q-mb-md">Configuración Técnica</div>
-            <q-form class="row q-col-gutter-md">
-              <div class="col-12 col-md-4">
-                <q-input
-                  v-model="mooring.number"
-                  label="Identificador"
-                  outlined
-                  dense
-                  bg-color="white"
-                />
+        <q-separator />
+        <q-card-section class="q-pa-lg" v-if="mooring">
+          <div class="text-overline text-grey-7 q-mb-md">Detalles Técnicos</div>
+          <div class="row q-col-gutter-xl">
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-6 uppercase">Identificador de Amarre</div>
+              <div class="text-subtitle1 text-weight-medium">{{ mooring.number }}</div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-6 uppercase">Dimensiones Máximas (LxBxD)</div>
+              <div class="text-subtitle1 text-weight-medium">
+                {{ mooring.length }}m x {{ mooring.beam }}m x {{ mooring.draft }}m
               </div>
-              <div class="col-12 col-sm-6 col-md-4">
-                <q-input
-                  v-model.number="mooring.length"
-                  type="number"
-                  label="Eslora (L)"
-                  suffix="metros"
-                  outlined
-                  dense
-                  bg-color="white"
-                />
-              </div>
-              <div class="col-12 col-sm-6 col-md-4">
-                <q-input
-                  v-model.number="mooring.beam"
-                  type="number"
-                  label="Manga (B)"
-                  suffix="metros"
-                  outlined
-                  dense
-                  bg-color="white"
-                />
-              </div>
-            </q-form>
-          </q-card-section>
-        </template>
+            </div>
+          </div>
+        </q-card-section>
       </q-card>
-    <template  v-if="mooring">
       <q-table
+        v-if="mooring"
         :rows="bookings"
         :columns="bookingsColumns"
         row-key="id"
         flat
         bordered
-        title="Reservas Vinculadas"
-        class="sticky-header-table"
+        title="Historial de Reservas"
+        class="sticky-header-table shadow-1"
       >
         <template v-slot:top-right>
-          <q-btn color="secondary" icon="add" label="Nueva Reserva" dense class="q-px-md"/>
+          <q-btn color="secondary" icon="add" label="Crear Reserva" dense class="q-px-md" unelevated />
         </template>
 
         <template v-slot:body-cell-status="props">
@@ -153,22 +98,23 @@ const onSubmit = () => {
           </q-td>
         </template>
       </q-table>
-    </template>
     </div>
   </q-page>
 </template>
-
 
 <style scoped>
 .max-width-container {
   max-width: 1000px;
 }
-
 .sticky-header-table {
   background: white;
+  border-radius: 8px;
 }
-
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 :deep(.q-table tbody tr:hover) {
   background-color: #f5f8ff !important;
 }
-</style>+
+</style>
