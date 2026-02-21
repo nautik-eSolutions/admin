@@ -14,14 +14,19 @@ export class MooringDimensionsService {
 }
 
 export async function getAllMooringDimension(portId){
-  return await api.get(`moorings/ports/${portId}/dimensions`);
+  try {
+    const response = await api.get(`dimensions/ports/${portId}`);
+    return response.data.map(item => Dimensions.fromJson(item))
+  }catch (error){
+
+  }
 }
 export async function updateMooringDimension(dimension){
-  return await api.patch(`moorings/dimensions`, dimension);
+  return await api.patch(`dimensions/${dimension.id}`, dimension);
 }
 export async function deleteMooringDimension(id){
-  return await api.delete(`moorings/dimensions/${id}`)
+  return await api.delete(`dimensions/${id}`)
 }
-export async function createMooringDimension(portId){
-  return await api.post(`moorings/ports/${portId}/dimensions`)
+export async function createMooringDimension(portId, dimension){
+  return await api.post(`dimensions/ports/${portId}`,dimension)
 }

@@ -78,23 +78,10 @@ const routes = [
     path: `/dimensions`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/DimensionsDisplay.vue') }
+      { path: '', component: () => import('pages/DimensionsPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
-  {
-    path: `/moorings/add`,
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/AddMooringPageV2.vue') }
-    ],
-    meta: {requiresAuth: true}
-  },
-
-
-
-  // Always leave this as last one,
-  // but you can also remove it
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')
