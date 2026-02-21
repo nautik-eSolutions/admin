@@ -41,13 +41,8 @@ export class ZoneService {
   }
 
   static async addZone(name, description, portId) {
-    try {
       const dto = new ZoneCreate(name, description);
       return await api.post(`/zones/port/${portId}`, dto);
-    } catch (error) {
-      console.log("Error: " + error);
-    }
-
   }
 
   static async updateZone(name, description, zoneId) {
@@ -71,24 +66,8 @@ export class ZoneService {
 
 
   static async delete(zoneId) {
-    try {
-      await api.delete(`zones/${zoneId}`);
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        console.log(error.response)
-        const message = error.response.data.detail || "No se puede eliminar: existen registros relacionados.";
-        Notify.create({
-          type: 'negative', message: message, timeout: 5000,
-          actions: [{icon: 'close', color: 'white'}]
-        });
-      } else {
-        console.error("Error en la eliminación:", error);
-        Notify.create({
-          type: 'negative', message: 'Error inesperado al intentar eliminar la zona.'
-        });
-      }
 
-    }
-    Notify.create({type: 'positive', message: 'Zona eliminada correctamente'})
+    return await api.delete(`zones/${zoneId}`);
+
   }
 }

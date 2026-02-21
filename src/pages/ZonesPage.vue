@@ -18,6 +18,7 @@ const newZone = ref({
   name:'',
   description:''
 })
+const newZoneForm= ref(null);
 
 const rules = {
   max20 : str => (str && str.length < 20) || 'Máximo 20 caracteres',
@@ -52,10 +53,40 @@ const openAddDialog = () => {
 };
 
 async function createZone () {
-  if (!newZone.value && !port.value) return;
-  $q.loading.show();
-  await ZoneService.addZone(newZone.value.name, newZone.value.description,port.value.value)
-  $q.loading.hide()
+
+  const isFormValid =await  newZoneForm.value.validate()
+
+  $q.loading.show({ message: 'Creando zona...' });
+  try {
+      const response = await ZoneService.addZone(
+        newZone.value.name,
+        newZone.value.description,
+        port.value.value
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        zones.value.push(response.data);
+
+        $q.notify({
+          type: 'positive',
+          message: 'Zona creada correctamente',
+          position: 'bottom-right'
+        });
+        if (typeof addDialog !== 'undefined') addDialog.value = false;
+        newZone.value = { name: '', description: '' };
+      }
+    } catch (error) {
+      const message = error.response?.data?.detail || 'Error al crear la zona';
+
+      $q.notify({
+        type: 'negative',
+        message: message,
+        position: 'bottom-right'
+      });
+    } finally {
+      $q.loading.hide();
+    }
+
 };
 
 function confirmDelete(zone) {
@@ -67,12 +98,31 @@ function confirmDelete(zone) {
     persistent: true
   }).onOk(async () => {
     try {
-      await ZoneService.delete(zone.id)
+      await ZoneService.delete(zone.id);
       zones.value = zones.value.filter(z => z.id !== zone.id);
-    }catch (error){
-
+      $q.notify({
+        type: 'positive',
+        message: 'Zona eliminada correctamente',
+        position: 'bottom-right'
+      });
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        const message = error.response.data.detail||"No se puede eliminar: existen registros relacionados.";
+        $q.notify({
+          type: 'negative',
+          message: message,
+          timeout: 5000,
+          actions: [{ icon:'close',color:'white'}]
+        });
+      } else {
+        $q.notify({
+          type: 'negative',
+          message: 'Error inesperado al intentar eliminar la zona.'
+        });
+        console.error("Error original:", error);
+      }
     }
-    });
+  });
 }
 </script>
 
@@ -131,25 +181,28 @@ function confirmDelete(zone) {
           <q-card-section>
             <div class="text-h6">Nueva Zona</div>
           </q-card-section>
+          <q-form ref="newZoneForm" @submit="createZone">
+            <q-card-section class="q-pt-none column-sm">
+              <q-input v-model="newZone.name" label="Nombre de la zona" outlined dense autofocus
+                :rules="[rules.max20]"
+              />
+              <q-input
+                v-model="newZone.description" type="textarea" label="Descripción" outlined class="q-mt-lg"
+                :rules="[rules.max45]"
+                dense
+              />
+            </q-card-section>
 
-          <q-card-section class="q-pt-none column-sm">
-            <q-input v-model="newZone.name" label="Nombre de la zona" outlined dense
-              autofocus
-              @keyup.enter="createZone"
-                     :rules="[rules.max20]"
-            />
-            <q-input v-model="newZone.description" type="textarea" label="Nombre de la zona" outlined
-                     class="q-mt-lg" :rules="[rules.max45]"
-              dense
-              autofocus
-              @keyup.enter="createZone"
-            />
-          </q-card-section>
-
-          <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="Cancelar" v-close-popup color="grey-7" />
-            <q-btn label="Guardar" color="primary" unelevated @click="createZone" :disable="!createZone" />
-          </q-card-actions>
+            <q-card-actions align="right" class="text-primary">
+              <q-btn flat label="Cancelar" v-close-popup color="grey-7" />
+              <q-btn
+                label="Guardar"
+                color="primary"
+                unelevated
+                type="submit"
+              />
+            </q-card-actions>
+          </q-form>
         </q-card>
       </q-dialog>
 
