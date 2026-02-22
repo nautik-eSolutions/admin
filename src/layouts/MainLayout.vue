@@ -119,6 +119,11 @@ const AdminCompanyLinkList = ref([
     title: 'Gestión de dimensiones',
     icon: '',
     link:'/dimensions'
+  },
+  {
+    title: 'Gestión de precios',
+    icon: '',
+    link:'/price-configurations'
   }
 ])
 const PortAdminLinkList =ref( [
