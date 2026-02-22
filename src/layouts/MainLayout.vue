@@ -125,6 +125,12 @@ const AdminCompanyLinkList = ref([
     icon: '',
     link:'/price-configurations'
   }
+  ,
+  {
+    title: 'Gestión de Categorias',
+    icon: '',
+    link:'/moorings-categories'
+  }
 ])
 const PortAdminLinkList =ref( [
   {

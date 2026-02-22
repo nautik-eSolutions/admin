@@ -1,17 +1,19 @@
 export class MooringCategory {
-  constructor({ id, zoneId, dimensionsId, basePricePerDay }) {
+  constructor({dimensionsId, id,minPricePerDay, zoneId ,name }) {
     this.id = id
     this.zoneId = zoneId
     this.dimensionsId = dimensionsId
-    this.basePricePerDay = basePricePerDay
+    this.minPricePerDay = minPricePerDay
+    this.name = name
   }
 
   static fromJson(json) {
     return new MooringCategory({
+      dimensionsId: json.dimensionsId,
       id: json.id,
-      zoneId: json.zone.id,
-      dimensionsId: json.dimensions.id,
-      basePricePerDay: json.basePricePerDay,
+      minPricePerDay: json.minPricePerDay,
+      zoneId: json.zoneId,
+      name:json.name
     })
   }
 }

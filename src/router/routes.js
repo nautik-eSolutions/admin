@@ -91,6 +91,14 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
+    path: `/moorings-categories`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/MooringCategoryPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')
   }

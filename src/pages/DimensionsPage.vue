@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useQuasar } from 'quasar'
 import {
-  getAllMooringDimension,
+  getDimensionsByPort,
   updateMooringDimension,
   deleteMooringDimension,
   createMooringDimension
@@ -48,7 +48,7 @@ onMounted(async()=>{
 async function fetchDimensions() {
   loading.value = true
   try {
-    dimensions.value = await getAllMooringDimension(portId.value)
+    dimensions.value = await getDimensionsByPort(portId.value)
 
   } catch (e) {
     $q.notify({ type: 'negative', message: 'Error al cargar dimensiones' })

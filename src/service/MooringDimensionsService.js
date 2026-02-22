@@ -13,7 +13,7 @@ export class MooringDimensionsService {
   }
 }
 
-export async function getAllMooringDimension(portId){
+export async function getDimensionsByPort(portId){
   try {
     const response = await api.get(`dimensions/ports/${portId}`);
     return response.data.map(item => Dimensions.fromJson(item))

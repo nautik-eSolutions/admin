@@ -40,7 +40,7 @@ async function getZones(selectedPort) {
     zones.value = null;
     return;
   }
-  zones.value = await ZoneService.getAllZonesFromAPort(selectedPort.value);
+  zones.value = await ZoneService.getZonesByPort(selectedPort.value);
 }
 
 function navigateToZone(zone) {

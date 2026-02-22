@@ -31,7 +31,7 @@ export class ZoneService {
   }
 
 
-  static async getAllZonesFromAPort(portId) {
+  static async getZonesByPort(portId) {
     try {
       const responseZones = await api.get(`/zones/port/${portId}`);
       return responseZones.data.map(item => Zone.fromJson(item))

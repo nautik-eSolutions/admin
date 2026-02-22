@@ -1,7 +1,7 @@
 // src/stores/mooringCategoryStore.js
 import {defineStore} from 'pinia'
 import {Notify} from 'quasar'
-import {MooringCategory} from 'src/models/MooringCategory'
+import {MooringCategory} from '../model/MooringCategory'
 import {
   getMooringCategories, getMooringCategory, createMooringCategory, updateMooringCategory, deleteMooringCategory,
 } from '../service/MooringCategoryService.js'
@@ -18,9 +18,10 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
   }),
 
   actions: {
-    async getMooringCategories() {
+    async getMooringCategories(PortId) {
       try {
-        const resp = await getMooringCategories()
+        const resp = await getMooringCategories(PortId)
+        console.log(resp)
         if (!isOk(resp)) throw new Error()
         this.categories = resp.data.map(MooringCategory.fromJson)
         return this.categories
@@ -29,9 +30,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async getMooringCategory(id) {
+    async getMooringCategory(portId,id) {
       try {
-        const resp = await getMooringCategory(id)
+        const resp = await getMooringCategory(portId,id)
         if (!isOk(resp)) throw new Error()
         this.category = MooringCategory.fromJson(resp.data)
       } catch (e) {
@@ -39,9 +40,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async createMooringCategory(payload) {
+    async createMooringCategory(portId,payload) {
       try {
-        const resp = await createMooringCategory(payload)
+        const resp = await createMooringCategory(portId,payload)
         if (!isOk(resp)) throw new Error()
         this.categories.push(MooringCategory.fromJson(resp.data))
         Notify.create({type: 'positive', position: 'top-right', message: 'Categoría creada correctamente.'})
@@ -50,9 +51,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async updateMooringCategory(id, payload) {
+    async updateMooringCategory(portId,id, payload) {
       try {
-        const resp = await updateMooringCategory(id, payload)
+        const resp = await updateMooringCategory(portId,id, payload)
         if (!isOk(resp)) throw new Error()
         const updated = MooringCategory.fromJson(resp.data)
         const index = this.categories.findIndex((c) => String(c.id) === String(id))
@@ -64,9 +65,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async deleteMooringCategory(id) {
+    async deleteMooringCategory(portId,id) {
       try {
-        const resp = await deleteMooringCategory(id)
+        const resp = await deleteMooringCategory(portId,id)
         if (!isOk(resp)) throw new Error()
         this.categories = this.categories.filter((c) => String(c.id) !== String(id))
         Notify.create({type: 'positive', position: 'top-right', message: 'Categoría eliminada correctamente.'})
