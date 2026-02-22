@@ -9,8 +9,7 @@ import {
 const isOk = (resp) => resp?.status >= 200 && resp?.status < 300
 
 const onError = (e, msg) => Notify.create({
-  type: 'negative',
-  message: e?.response?.data?.message ?? e?.message ?? msg,
+  type: 'negative', message: e?.response?.data?.message ?? e?.message ?? msg,
 })
 
 export const useMooringCategoryStore = defineStore('mooringCategory', {
@@ -21,57 +20,58 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
   actions: {
     async getMooringCategories() {
       try {
-        const {data} = await getMooringCategories()
-        this.categories = data.map(MooringCategory.fromJson)
+        const resp = await getMooringCategories()
+        if (!isOk(resp)) throw new Error()
+        this.categories = resp.data.map(MooringCategory.fromJson)
         return this.categories
-      } catch {
-        Notify.create({type: 'negative', position: 'top-right', message: 'No se pudieron cargar las categorías.'})
+      } catch (e) {
+        onError(e, 'Error al obtener las categorias.')
       }
     },
 
     async getMooringCategory(id) {
       try {
-        const {data} = await getMooringCategory(id)
-        this.category = MooringCategory.fromJson(data)
-      } catch {
-        Notify.create({type: 'negative', position: 'top-right', message: 'No se pudo cargar la categoría.'})
+        const resp = await getMooringCategory(id)
+        if (!isOk(resp)) throw new Error()
+        this.category = MooringCategory.fromJson(resp.data)
+      } catch (e) {
+        onError(e, 'Error al obtener las categorias.')
       }
     },
 
     async createMooringCategory(payload) {
       try {
-        const {data} = await createMooringCategory(payload)
-        this.categories.push(MooringCategory.fromJson(data))
+        const resp = await createMooringCategory(payload)
+        if (!isOk(resp)) throw new Error()
+        this.categories.push(MooringCategory.fromJson(resp.data))
         Notify.create({type: 'positive', position: 'top-right', message: 'Categoría creada correctamente.'})
-        ret
-      } catch {
-        Notify.create({type: 'negative', position: 'top-right', message: 'No se pudo crear la categoría.'})
-        throw new Error()
+      } catch (e) {
+        onError(e, 'Error al crear las categoria.')
       }
     },
 
     async updateMooringCategory(id, payload) {
       try {
-        const {data} = await updateMooringCategory(id, payload)
-        const updated = MooringCategory.fromJson(data)
+        const resp = await updateMooringCategory(id, payload)
+        if (!isOk(resp)) throw new Error()
+        const updated = MooringCategory.fromJson(resp.data)
         const index = this.categories.findIndex((c) => String(c.id) === String(id))
         if (index !== -1) this.categories[index] = updated
         this.category = updated
         Notify.create({type: 'positive', position: 'top-right', message: 'Categoría actualizada correctamente.'})
-      } catch {
-        Notify.create({type: 'negative', position: 'top-right', message: 'No se pudo actualizar la categoría.'})
-        throw new Error()
+      } catch (e) {
+        onError(e, 'Error al actualizar las categoria.')
       }
     },
 
     async deleteMooringCategory(id) {
       try {
-        await deleteMooringCategory(id)
+        const resp = await deleteMooringCategory(id)
+        if (!isOk(resp)) throw new Error()
         this.categories = this.categories.filter((c) => String(c.id) !== String(id))
         Notify.create({type: 'positive', position: 'top-right', message: 'Categoría eliminada correctamente.'})
-      } catch {
-        Notify.create({type: 'negative', position: 'top-right', message: 'No se pudo eliminar la categoría.'})
-        throw new Error()
+      } catch (e) {
+        onError(e, 'Error al eliminar la categoria.')
       }
     },
   },

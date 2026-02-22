@@ -1,7 +1,7 @@
 import {api} from 'boot/axios'
 
-export async function getMooringCategories() {
-  return api.get('/mooring-categories')
+export async function getMooringCategories(portId) {
+  return api.get(`/mooring-categories/ports/${portId}`)
 }
 
 export async function getMooringCategory(id) {
