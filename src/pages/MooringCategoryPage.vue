@@ -16,6 +16,10 @@ const mooringStore = useMooring()
 const editDialogOpen = ref(false)
 const editForm = reactive({ number: '' })
 const editingId = ref(null)
+const numberRules = [
+  (val) => !!val || 'El identificador es obligatorio.',
+  (val) => val.length <= 25 || 'Máximo 25 caracteres.',
+]
 
 onMounted(async () => {
   await mooringCategoryStore.getMooringCategory(PORT_ID, route.params.id)
@@ -38,6 +42,7 @@ function openEditDialog(mooring) {
 }
 
 async function handleUpdate() {
+  if (!editForm.number || editForm.number.length > 25) return
   await mooringStore.updateMooring(editingId.value, { number: editForm.number })
   editDialogOpen.value = false
 }
@@ -157,6 +162,8 @@ function confirmDelete(mooring) {
             label="Identificador"
             outlined
             dense
+            :rules="numberRules"
+            maxlength="25"
           />
         </q-card-section>
 
