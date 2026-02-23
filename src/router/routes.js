@@ -91,7 +91,15 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
-    path: `/moorings-categories`,
+    path: `/mooring-categories`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/MooringCategories.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/mooring-categories/:id`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/MooringCategoryPage.vue') }

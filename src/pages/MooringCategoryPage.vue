@@ -1,154 +1,167 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
-import { useMooringCategoryStore } from '../stores/mooringCategory'
-import {ZoneService} from '../service/ZoneService'
-import {getDimensionsByPort} from '../service/MooringDimensionsService'
+import {onMounted, ref} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+import {useQuasar} from 'quasar'
+import {useMooringCategoryStore} from '../stores/mooringCategory'
+import {useMooring} from '../stores/mooring'
+import {ZoneService} from "src/service/ZoneService.js";
 
 const PORT_ID = 1
 
+const route = useRoute()
 const router = useRouter()
 const $q = useQuasar()
 const mooringCategoryStore = useMooringCategoryStore()
+const mooringStore = useMooring()
+const zone = ref();
+const dimensions = ref()
+const mounted = ref(false)
+onMounted(async () => {
+  await mooringCategoryStore.getMooringCategory(PORT_ID, route.params.id)
+  await mooringStore.getMooringsByCategory(PORT_ID, route.params.id)
 
-const zoneOptions = ref([])
-const dimensionOptions = ref([])
-const dialogOpen = ref(false)
+  console.log(mooringCategoryStore.category)
+  zone.value = await ZoneService.getZoneById(mooringCategoryStore.category.zoneId)
 
-const form = reactive({
-  name: '',
-  zoneId: null,
-  dimensionsId: null,
-  basePricePerDay: null,
+
 })
+if (mounted.value){
+}
 
-const columns = [
-  { name: 'name', label: 'Nombre', field: 'name', align: 'left', sortable: true },
-  { name: 'minPricePerDay', label: 'Precio base / día', field: 'minPricePerDay', align: 'left', sortable: true,
-    format: (val) => `${val.toFixed(2)} €` },
-  { name: 'actions', label: '', field: 'actions', align: 'right' },
+const mooringsColumns = [
+  {name: 'number', label: 'Número', field: 'number', align: 'left', sortable: true},
+  {name: 'length', label: 'Eslora (m)', field: 'length', align: 'center', sortable: true},
+  {name: 'beam', label: 'Manga (m)', field: 'beam', align: 'center', sortable: true},
+  {name: 'draft', label: 'Calado (m)', field: 'draft', align: 'center', sortable: true},
+  {name: 'actions', label: '', field: 'actions', align: 'right'},
 ]
 
-onMounted(async () => {
-  await mooringCategoryStore.getMooringCategories(PORT_ID)
-  const [zonesRes, dimensionsRes] = await Promise.all([
-    ZoneService.getZonesByPort(PORT_ID),
-    getDimensionsByPort(PORT_ID),
-  ])
-  zoneOptions.value = zonesRes
-  dimensionOptions.value = dimensionsRes
-})
-
-function goToCategory(id) {
-  router.push({ name: 'MooringCategoryDetail', params: { id } })
+function goToMooring(id) {
+  router.push({name: 'MooringDetail', params: {id}})
 }
 
-function openCreateDialog() {
-  form.name = ''
-  form.zoneId = null
-  form.dimensionsId = null
-  form.basePricePerDay = null
-  dialogOpen.value = true
-}
-
-async function handleCreate() {
-  await mooringCategoryStore.createMooringCategory(PORT_ID,{ ...form })
-  dialogOpen.value = false
-}
-
-function confirmDelete(category) {
+function confirmDelete(mooring) {
   $q.dialog({
-    title: 'Eliminar categoría',
-    message: `¿Desea eliminar la categoría "${category.name}"? Esta acción no se puede deshacer.`,
+    title: 'Eliminar amarre',
+    message: `¿Desea eliminar el amarre "${mooring.number}"? Esta acción no se puede deshacer.`,
     cancel: true,
     persistent: true,
   }).onOk(async () => {
-    await mooringCategoryStore.deleteMooringCategory(PORT_ID,category.id)
+    await mooringStore.deleteMooring(mooring.id)
   })
 }
 </script>
+
 <template>
-  <q-page padding>
-
-    <div class="row items-center justify-between q-mb-md">
-      <div class="text-h5 text-weight-bold">Categorías de Amarres</div>
-      <q-btn
-        color="primary"
-        icon="add"
-        label="Nueva categoría"
-        @click="openCreateDialog"
-      />
-    </div>
-
-    <q-table
-      :rows="mooringCategoryStore.categories"
-      :columns="columns"
-      row-key="id"
-      flat
-      bordered
-    >
-      <template #no-data>
-        <div class="full-width row flex-center q-py-xl text-grey-6">
-          No hay categorías registradas.
-        </div>
-      </template>
-
-      <template #body-cell-actions="{ row }">
-        <q-td class="text-right">
-          <q-btn flat round dense icon="visibility" @click="goToCategory(row.id)" />
-          <q-btn flat round dense icon="delete" color="negative" @click="confirmDelete(row)" />
-        </q-td>
-      </template>
-    </q-table>
-
-    <q-dialog v-model="dialogOpen">
-      <q-card style="min-width: 400px">
-        <q-card-section>
-          <div class="text-h6">Nueva categoría</div>
+  <q-page padding class="bg-grey-1">
+    <div class="max-width-container q-mx-auto">
+      <div class="row items-center q-mb-md">
+        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="q-mr-sm"/>
+        <div class="text-h5 text-weight-bold">Detalle de Categoría</div>
+      </div>
+      <q-card flat bordered class="q-mb-lg overflow-hidden">
+        <q-card-section class="row items-center q-col-gutter-md q-pa-lg">
+          <div class="col">
+            <template v-if="mooringCategoryStore.category">
+              <div class="row items-baseline q-gutter-sm">
+                <span class="text-h4 text-weight-bold text-grey-9">
+                  {{ mooringCategoryStore.category.name }}
+                </span>
+              </div>
+              <div class="row q-gutter-md q-mt-xs text-subtitle1 text-grey-7">
+                <div class="row items-center">
+                  <q-icon name="euro" class="q-mr-xs"/>
+                  Precio base/día:
+                  <span class="text-weight-bold text-grey-10 q-ml-xs">
+                    {{ mooringCategoryStore.category.minPricePerDay?.toFixed(2) }} €
+                  </span>
+                </div>
+              </div>
+            </template>
+            <q-skeleton v-else type="rect" width="300px" height="40px"/>
+          </div>
         </q-card-section>
 
-        <q-card-section class="q-gutter-md" >
-          <q-input v-model="form.name" label="Nombre" outlined dense />
-          <q-select
-            v-model="form.zoneId"
-            :options="zoneOptions"
-            option-value="id"
-            option-label="name"
-            emit-value
-            map-options
-            label="Zona"
-            outlined
-            dense
-          />
+        <q-separator/>
 
-          <q-select
-            v-model="form.dimensionsId"
-            :options="dimensionOptions"
-            option-value="id"
-            option-label="name"
-            emit-value
-            map-options
-            label="Dimensiones"
-            outlined
-            dense
-          />
-
-          <q-input
-            v-model.number="form.basePricePerDay"
-            label="Precio base / día (€)"
-            type="number"
-            outlined
-            dense
-          />
+        <q-card-section class="q-pa-lg" v-if="mooringCategoryStore.category">
+          <div class="text-overline text-grey-7 q-mb-md">Detalles de la Categoría</div>
+          <div class="row q-col-gutter-xl">
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-6 uppercase">Identificador</div>
+              <div class="text-subtitle1 text-weight-medium">
+                #{{ mooringCategoryStore.category.id }}
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-6 uppercase">Zona</div>
+              <div class="text-subtitle1 text-weight-medium">
+                {{ mooringCategoryStore.category.zoneName ?? '—' }}
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-6 uppercase">Dimensiones</div>
+              <div class="text-subtitle1 text-weight-medium">
+                {{ mooringCategoryStore.category.dimensionsMaxLength +`x`+ mooringCategoryStore.category.dimensionsMaxBeam +`x`+ mooringCategoryStore.category.dimensionsMaxDraft  ?? '—' }}
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="text-caption text-grey-6 uppercase">Precio base / día</div>
+              <div class="text-subtitle1 text-weight-medium">
+                {{ mooringCategoryStore.category.minPricePerDay?.toFixed(2) }} €
+              </div>
+            </div>
+          </div>
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" v-close-popup />
-          <q-btn color="primary" label="Crear" @click="handleCreate" />
-        </q-card-actions>
       </q-card>
-    </q-dialog>
+      <q-table
+        v-if="mooringCategoryStore.category"
+        :rows="mooringStore.moorings"
+        :columns="mooringsColumns"
+        row-key="id"
+        flat
+        bordered
+        title="Amarres de esta categoría"
+        class="sticky-header-table shadow-1"
+      >
+        <template #no-data>
+          <div class="full-width row flex-center q-py-xl text-grey-6">
+            No hay amarres registrados en esta categoría.
+          </div>
+        </template>
+
+        <template #top-right>
+          <q-btn color="primary" icon="add" label="Nuevo amarre" dense unelevated class="q-px-md"/>
+        </template>
+
+        <template #body-cell-actions="{ row }">
+          <q-td class="text-right">
+            <q-btn flat round dense icon="visibility" @click="goToMooring(row.id)"/>
+            <q-btn flat round dense icon="delete" color="negative" @click="confirmDelete(row)"/>
+          </q-td>
+        </template>
+      </q-table>
+
+    </div>
   </q-page>
 </template>
 
+<style scoped>
+.max-width-container {
+  max-width: 1000px;
+}
+
+.sticky-header-table {
+  background: white;
+  border-radius: 8px;
+}
+
+.uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+:deep(.q-table tbody tr:hover) {
+  background-color: #f5f8ff !important;
+}
+</style>

@@ -11,6 +11,7 @@ export class MooringDimensionsService {
       console.log("Error: " + error);
     }
   }
+
 }
 
 export async function getDimensionsByPort(portId){
@@ -21,6 +22,7 @@ export async function getDimensionsByPort(portId){
 
   }
 }
+
 export async function updateMooringDimension(dimension){
   return await api.patch(`dimensions/${dimension.id}`, dimension);
 }

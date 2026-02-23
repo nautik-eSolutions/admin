@@ -1,10 +1,10 @@
-// src/stores/mooringCategoryStore.js
 import {defineStore} from 'pinia'
 import {Notify} from 'quasar'
 import {MooringCategory} from '../model/MooringCategory'
 import {
   getMooringCategories, getMooringCategory, createMooringCategory, updateMooringCategory, deleteMooringCategory,
 } from '../service/MooringCategoryService.js'
+import {MooringCategoryInfo} from '../model/MooringCategoryInfo.js'
 
 const isOk = (resp) => resp?.status >= 200 && resp?.status < 300
 
@@ -21,7 +21,6 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
     async getMooringCategories(PortId) {
       try {
         const resp = await getMooringCategories(PortId)
-        console.log(resp)
         if (!isOk(resp)) throw new Error()
         this.categories = resp.data.map(MooringCategory.fromJson)
         return this.categories
@@ -34,7 +33,7 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       try {
         const resp = await getMooringCategory(portId,id)
         if (!isOk(resp)) throw new Error()
-        this.category = MooringCategory.fromJson(resp.data)
+        this.category = MooringCategoryInfo.fromJson(resp.data)
       } catch (e) {
         onError(e, 'Error al obtener las categorias.')
       }

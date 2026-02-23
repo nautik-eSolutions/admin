@@ -1,78 +1,108 @@
-import {defineStore} from 'pinia';
-import {getMooringById, getMooringByZoneId, getMoorings} from "src/service/MooringService.js";
-import {Mooring} from "src/model/Mooring.js";
+// src/stores/mooring.js
+import { defineStore } from 'pinia'
+import { Notify } from 'quasar'
+import { Mooring } from '../model/Mooring'
+import {
+  getMoorings,
+  getMooringById,
+  getMooringByZoneId,
+} from '../service/MooringService.js'
+import { MooringService } from '../service/MooringService.js'
 
+const isOk = (resp) => resp?.status >= 200 && resp?.status < 300
 
-export const useMooring = defineStore('mooringStore', {
-  state: () => {
-    return {
-      Moorings: [],
-      Mooring:Mooring
-    }
-  },
+const onError = (e, msg) =>
+  Notify.create({
+    type: 'negative',
+    message: e?.response?.data?.message ?? e?.message ?? msg,
+  })
+
+export const useMooring = defineStore('mooring', {
+  state: () => ({
+    moorings: [],
+    mooring: null,
+  }),
+
   actions: {
     async getMoorings(portId) {
-      const resp = await getMoorings(portId)
-
-      if (resp.status === 200) {
-        console.log("recuerda hacer el toast de esto : mooringStore 16")
+      try {
+        const resp = await getMoorings(portId)
+        if (!isOk(resp)) throw new Error()
+        this.moorings = resp.data.map(Mooring.fromJson)
+        return this.moorings
+      } catch (e) {
+        onError(e, 'Error al obtener los amarres.')
       }
-      this.Moorings = resp.data.map(mooring =>this.fromJson(mooring))
-      return this.Moorings;
-      },
+    },
 
-    async getMooringByZoneId(zoneId) {
-      const resp = await getMooringByZoneId(zoneId)
-
-
-      if (resp.status === 200) {
-        console.log("recuerda hacer el toast de esto : mooringStore 16")
-        this.Moorings = resp.data.map(mooring => this.fromJson(mooring))
-        return this.Moorings;
+    async getMooringById(id) {
+      try {
+        const resp = await getMooringById(id)
+        if (!isOk(resp)) throw new Error()
+        this.mooring = Mooring.fromJson(resp.data)
+        return this.mooring
+      } catch (e) {
+        onError(e, 'Error al obtener el amarre.')
       }
-
     },
-    async getMooringById(id){
-      const resp  =  await getMooringById(id)
-      if (resp.status === 200){
-        console.log("recuerda hacer el toast de esto : mooringStore")
 
-       this.Mooring = this.fromJson(resp.data);
+    async getMooringsByZone(zoneId) {
+      try {
+        const resp = await getMooringByZoneId(zoneId)
+        if (!isOk(resp)) throw new Error()
+        this.moorings = resp.data.map(Mooring.fromJson)
+        return this.moorings
+      } catch (e) {
+        onError(e, 'Error al obtener los amarres por zona.')
       }
-
-      return this.Mooring;
-
     },
 
-    async updateMooringByID(mooring){
-
+    async getMooringsByCategory(portId, categoryId) {
+      try {
+        const resp = await getMoorings(portId)
+        if (!isOk(resp)) throw new Error()
+        const all = resp.data.map(Mooring.fromJson)
+        this.moorings = all.filter(
+          (m) => String(m.categoryId) === String(categoryId)
+        )
+        return this.moorings
+      } catch (e) {
+        onError(e, 'Error al obtener los amarres por categoría.')
+      }
     },
-    async getAllMooringDimension(){
 
+    async createMooring(portId, payload) {
+      try {
+        const resp = await MooringService.save(payload, portId)
+        if (!isOk(resp)) throw new Error()
+        const created = Mooring.fromJson(resp.data)
+        this.moorings.push(created)
+        Notify.create({
+          type: 'positive',
+          position: 'top-right',
+          message: 'Amarre creado correctamente.',
+        })
+        return created
+      } catch (e) {
+        onError(e, 'Error al crear el amarre.')
+      }
     },
 
-    async createMooringDimension(){
-
+    async deleteMooring(mooringId) {
+      try {
+        const resp = await MooringService.delete(mooringId)
+        if (!isOk(resp)) throw new Error()
+        this.moorings = this.moorings.filter(
+          (m) => String(m.id) !== String(mooringId)
+        )
+        Notify.create({
+          type: 'positive',
+          position: 'top-right',
+          message: 'Amarre eliminado correctamente.',
+        })
+      } catch (e) {
+        onError(e, 'Error al eliminar el amarre.')
+      }
     },
-    async updateMooringDimension(){
-
-    },
-    async deleteMooringDimension(){
-
-    }
-  ,
-    fromJson(json) {
-      return new Mooring(
-        json.id,
-        json.number,
-        json.mooringCategory.dimensionsMaxLength,
-        json.mooringCategory.dimensionsMaxBeam,
-        json.mooringCategory.dimensionsMaxDraft
-      );
-    }
-
-
-  }
-
-
+  },
 })
