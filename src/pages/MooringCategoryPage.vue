@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useMooringCategoryStore } from '../stores/mooringCategory'
@@ -13,6 +13,10 @@ const $q = useQuasar()
 const mooringCategoryStore = useMooringCategoryStore()
 const mooringStore = useMooring()
 
+const editDialogOpen = ref(false)
+const editForm = reactive({ number: '' })
+const editingId = ref(null)
+
 onMounted(async () => {
   await mooringCategoryStore.getMooringCategory(PORT_ID, route.params.id)
   await mooringStore.getMooringsByCategory(route.params.id)
@@ -25,6 +29,17 @@ const mooringsColumns = [
 
 function goToMooring(id) {
   router.push(`/moorings/${id}`)
+}
+
+function openEditDialog(mooring) {
+  editingId.value = mooring.id
+  editForm.number = mooring.number
+  editDialogOpen.value = true
+}
+
+async function handleUpdate() {
+  await mooringStore.updateMooring(editingId.value, { number: editForm.number })
+  editDialogOpen.value = false
 }
 
 function confirmDelete(mooring) {
@@ -122,11 +137,36 @@ function confirmDelete(mooring) {
         <template #body-cell-actions="{ row }">
           <q-td class="text-right">
             <q-btn flat round dense icon="visibility" @click="goToMooring(row.id)" />
+            <q-btn flat round dense icon="edit" @click="openEditDialog(row)" />
+            <q-btn flat round dense icon="delete" color="negative" @click="confirmDelete(row)" />
           </q-td>
         </template>
       </q-table>
 
     </div>
+
+    <q-dialog v-model="editDialogOpen">
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Editar amarre</div>
+        </q-card-section>
+
+        <q-card-section class="q-gutter-md">
+          <q-input
+            v-model="editForm.number"
+            label="Identificador"
+            outlined
+            dense
+          />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" v-close-popup />
+          <q-btn color="primary" label="Guardar" @click="handleUpdate" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
   </q-page>
 </template>
 
