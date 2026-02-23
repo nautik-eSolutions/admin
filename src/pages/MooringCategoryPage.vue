@@ -16,6 +16,10 @@ const mooringStore = useMooring()
 const editDialogOpen = ref(false)
 const editForm = reactive({ number: '' })
 const editingId = ref(null)
+
+const addDialogOpen = ref(false)
+const addForm = reactive({ number: '' })
+
 const numberRules = [
   (val) => !!val || 'El identificador es obligatorio.',
   (val) => val.length <= 25 || 'Máximo 25 caracteres.',
@@ -35,6 +39,16 @@ function goToMooring(id) {
   router.push(`/moorings/${id}`)
 }
 
+function openAddDialog() {
+  addForm.number = ''
+  addDialogOpen.value = true
+}
+
+async function handleCreate() {
+  await mooringStore.createMooring(route.params.id, { number: addForm.number })
+  addDialogOpen.value = false
+}
+
 function openEditDialog(mooring) {
   editingId.value = mooring.id
   editForm.number = mooring.number
@@ -42,7 +56,6 @@ function openEditDialog(mooring) {
 }
 
 async function handleUpdate() {
-  if (!editForm.number || editForm.number.length > 25) return
   await mooringStore.updateMooring(editingId.value, { number: editForm.number })
   editDialogOpen.value = false
 }
@@ -136,7 +149,7 @@ function confirmDelete(mooring) {
         </template>
 
         <template #top-right>
-          <q-btn color="primary" icon="add" label="Nuevo amarre" dense unelevated class="q-px-md" />
+          <q-btn color="primary" icon="add" label="Nuevo amarre" dense unelevated class="q-px-md" @click="openAddDialog" />
         </template>
 
         <template #body-cell-actions="{ row }">
@@ -150,27 +163,51 @@ function confirmDelete(mooring) {
 
     </div>
 
+    <q-dialog v-model="addDialogOpen">
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Nuevo amarre</div>
+        </q-card-section>
+        <q-form @submit="handleCreate">
+          <q-card-section class="q-gutter-md">
+            <q-input
+              v-model="addForm.number"
+              label="Identificador"
+              outlined
+              dense
+              :rules="numberRules"
+              maxlength="25"
+            />
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancelar" v-close-popup />
+            <q-btn color="primary" label="Crear" type="submit" />
+          </q-card-actions>
+        </q-form>
+      </q-card>
+    </q-dialog>
+
     <q-dialog v-model="editDialogOpen">
       <q-card style="min-width: 350px">
         <q-card-section>
           <div class="text-h6">Editar amarre</div>
         </q-card-section>
-
-        <q-card-section class="q-gutter-md">
-          <q-input
-            v-model="editForm.number"
-            label="Identificador"
-            outlined
-            dense
-            :rules="numberRules"
-            maxlength="25"
-          />
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" v-close-popup />
-          <q-btn color="primary" label="Guardar" @click="handleUpdate" />
-        </q-card-actions>
+        <q-form @submit="handleUpdate">
+          <q-card-section class="q-gutter-md">
+            <q-input
+              v-model="editForm.number"
+              label="Identificador"
+              outlined
+              dense
+              :rules="numberRules"
+              maxlength="25"
+            />
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancelar" v-close-popup />
+            <q-btn color="primary" label="Guardar" type="submit" />
+          </q-card-actions>
+        </q-form>
       </q-card>
     </q-dialog>
 

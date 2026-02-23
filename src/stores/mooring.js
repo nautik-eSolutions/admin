@@ -9,7 +9,7 @@ import {
   getMooringsByCategory,
   createMooring,
   updateMooring,
-  deleteMooring,
+  deleteMooring as deleteMooringServ,
 } from '../service/MooringService.js'
 
 const isOk = (resp) => resp?.status >= 200 && resp?.status < 300
@@ -18,7 +18,7 @@ const onError = (e, msg) =>
   Notify.create({
     type: 'negative',
     position: 'top-right',
-    message: e?.response?.data?.message ?? e?.message ?? msg,
+    message: e?.response?.data?.detail ?? e?.message ?? msg,
   })
 
 const onSuccess = (msg) =>
@@ -109,12 +109,17 @@ export const useMooring = defineStore('mooring', {
 
     async deleteMooring(mooringId) {
       try {
-        const resp = await deleteMooring(mooringId)
-        if (!isOk(resp)) throw new Error()
+        await deleteMooringServ(mooringId)
         this.moorings = this.moorings.filter((m) => String(m.id) !== String(mooringId))
         onSuccess('Amarre eliminado correctamente.')
       } catch (e) {
-        onError(e, 'Error al eliminar el amarre.')
+        if (e.response && e.response.status === 409) {
+          const message = e.response.data.detail || "No se puede eliminar: existen registros relacionados.";
+          onError(e, message)
+        } else {
+          onError(e,"Error inesperado al eliminar el amarre")
+          console.error("Error original:", e);
+        }
       }
     },
   },

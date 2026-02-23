@@ -18,6 +18,12 @@ export default defineBoot(({ app }) => {
     }
     return config
   })
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      return Promise.reject(error)
+    }
+  )
 
 
   app.config.globalProperties.$axios = axios

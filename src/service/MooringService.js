@@ -22,17 +22,30 @@ export class MooringService {
   }
 }
 
-export const getMoorings = (portId) => api.get(`moorings/ports/${portId}`)
+export async function getMoorings(portId) {
+  return await api.get(`moorings/ports/${portId}`)
+}
 
-export const getMooringById = (mooringId) => api.get(`moorings/${mooringId}`)
+export async function getMooringById(mooringId) {
+  return await api.get(`moorings/${mooringId}`)
+}
 
-export const getMooringsByCategory = (categoryId) => api.get(`moorings/category/${categoryId}`)
+export async function getMooringsByCategory(categoryId) {
+  return await api.get(`moorings/category/${categoryId}`)
+}
 
-export const getMooringByZoneId = (zoneId) => api.get(`moorings/zone/${zoneId}`)
+export async function getMooringByZoneId(zoneId) {
+  return await api.get(`moorings/zone/${zoneId}`)
+}
 
-export const createMooring = (categoryId, payload) => api.post(`moorings/category/${categoryId}`, payload)
+export async function createMooring(categoryId, payload) {
+  return await api.post(`moorings/category/${categoryId}`, payload)
+}
 
-export const updateMooring = (mooringId, payload) => api.put(`moorings/${mooringId}`, payload)
+export async function updateMooring(mooringId, payload) {
+  return await api.put(`moorings/${mooringId}`, payload)
+}
 
-export const deleteMooring = (mooringId) => api.delete(`moorings/${mooringId}`)
-
+export async function deleteMooring(mooringId) {
+  return await api.delete(`moorings/${mooringId}`)
+}

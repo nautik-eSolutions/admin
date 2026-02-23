@@ -47,7 +47,7 @@ function navigateToZone(zone) {
   router.push('/zones/' + zone.id);
 }
 
-const openAddDialog = () => {
+function openAddDialog(){
   newZone.value.name = '';
   newZone.value.description = '';
   addDialog.value = true;
