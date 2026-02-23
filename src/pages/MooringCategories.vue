@@ -5,8 +5,12 @@ import { useQuasar } from 'quasar'
 import { useMooringCategoryStore } from '../stores/mooringCategory'
 import {ZoneService} from '../service/ZoneService'
 import {getDimensionsByPort} from '../service/MooringDimensionsService'
+import {usePortStore} from "stores/port.js";
+const portStore = usePortStore()
 
-const PORT_ID = 1
+
+const PORT_ID = portStore.portId;
+
 
 const router = useRouter()
 const $q = useQuasar()
@@ -20,7 +24,7 @@ const form = reactive({
   name: '',
   zoneId: null,
   dimensionsId: null,
-  basePricePerDay: null,
+  minPricePerDay: null,
 })
 
 const columns = [
@@ -48,7 +52,7 @@ function openCreateDialog() {
   form.name = ''
   form.zoneId = null
   form.dimensionsId = null
-  form.basePricePerDay = null
+  form.minPricePerDay = null
   dialogOpen.value = true
 }
 
@@ -135,7 +139,7 @@ function confirmDelete(category) {
           />
 
           <q-input
-            v-model.number="form.basePricePerDay"
+            v-model.number="form.minPricePerDay"
             label="Precio base / día (€)"
             type="number"
             outlined

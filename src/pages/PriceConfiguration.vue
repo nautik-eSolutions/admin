@@ -2,6 +2,11 @@
 import {ref, computed, onMounted} from 'vue'
 import {useQuasar} from 'quasar'
 import {usePriceConfigurationStore} from '../stores/priceConfiguration.js'
+import {usePortStore} from "stores/port.js";
+const portStore = usePortStore()
+
+
+const PORT_ID = portStore.portId;
 
 const $q = useQuasar()
 const priceConfigurationStore = usePriceConfigurationStore()
@@ -23,7 +28,7 @@ const form = ref({
 
 
 onMounted(async () => {
-  await priceConfigurationStore.getAllPriceConfigurations(1)
+  await priceConfigurationStore.getAllPriceConfigurations(PORT_ID)
 })
 
 function parseDate(d) {
@@ -95,9 +100,9 @@ async function onSubmit() {
     minPricePerDay: form.value.minPricePerDay,
   }
   if (editingId.value !== null) {
-    await priceConfigurationStore.updatePriceConfiguration(1, editingId.value, payload)
+    await priceConfigurationStore.updatePriceConfiguration(PORT_ID, editingId.value, payload)
   } else {
-    await priceConfigurationStore.createPriceConfiguration(1, payload)
+    await priceConfigurationStore.createPriceConfiguration(PORT_ID, payload)
   }
 
   showForm.value = false
@@ -106,7 +111,7 @@ async function onSubmit() {
 function deleteConfig(row) {
   $q.dialog({title: 'Eliminar', message: '¿Eliminar esta configuración?', cancel: true})
     .onOk(async () => {
-      await priceConfigurationStore.deletePriceConfiguration(1, row.id)
+      await priceConfigurationStore.deletePriceConfiguration(PORT_ID, row.id)
     })
 }
 

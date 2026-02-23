@@ -7,9 +7,14 @@ import {
   deleteMooringDimension,
   createMooringDimension
 } from '../service/MooringDimensionsService'
+import {usePortStore} from "stores/port.js";
+const portStore = usePortStore()
+
+
+const PORT_ID = portStore.portId;
 
 const $q = useQuasar()
-const portId = ref(1)
+const portId = PORT_ID
 
 const dimensionsForm = ref(null)
 const loading = ref(false)
@@ -48,7 +53,7 @@ onMounted(async()=>{
 async function fetchDimensions() {
   loading.value = true
   try {
-    dimensions.value = await getDimensionsByPort(portId.value)
+    dimensions.value = await getDimensionsByPort(portId)
 
   } catch (e) {
     $q.notify({ type: 'negative', message: 'Error al cargar dimensiones' })
@@ -79,7 +84,7 @@ async function onSubmit (){
       await updateMooringDimension(dimensionForm.value)
       $q.notify({ type: 'positive', message: 'Actualizado correctamente' })
     } else {
-      const res = await createMooringDimension(portId.value, dimensionForm.value)
+      const res = await createMooringDimension(portId, dimensionForm.value)
       $q.notify({ type: 'positive', message: 'Creado correctamente' })
     }
     await fetchDimensions()

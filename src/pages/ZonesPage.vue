@@ -3,8 +3,11 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { ZoneService } from 'src/service/ZoneService.js'
+import { usePortStore } from '../stores/port.js'
+const portStore = usePortStore()
 
-const PORT_ID = 1
+
+const PORT_ID = portStore.portId;
 
 const $q = useQuasar()
 const router = useRouter()

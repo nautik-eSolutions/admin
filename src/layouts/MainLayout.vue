@@ -101,11 +101,6 @@ const AdminCompanyLinkList = ref([
     link: '/bookings/edit'
   },
   {
-    title: 'Puertos',
-    icon: '',
-    link: '/ports'
-  },
-  {
     title: 'Gestión de usuarios',
     icon: '',
     link:'/users'
