@@ -3,13 +3,12 @@ import User from "src/model/User.js";
 import {loginUser} from "src/service/AuthService.js";
 
 
-
-
 export const useAuthStore =  defineStore('myStore', {
   state: () => {
     return {
       User: User,
       token : "",
+      role:"",
       isAuthenticated: false,
     }
   },
@@ -19,11 +18,12 @@ export const useAuthStore =  defineStore('myStore', {
       const resp = await loginUser(userName, password)
       if (resp.status === 200) {
         this.User =  new User(userName)
+        this.role = resp.data.role
         this.token =  resp.data.token
         this.isAuthenticated =  true;
       }
-    }
-    ,
+    },
+
     async logout(){
       this.User = null
       this.token = ''

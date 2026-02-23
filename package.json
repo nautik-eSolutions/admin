@@ -7,7 +7,6 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\"",
     "test": "echo \"No test specified\" && exit 0",
     "dev": "quasar dev",
     "build": "quasar build",
@@ -15,24 +14,27 @@
   },
   "dependencies": {
     "@daypilot/daypilot-lite-vue": "^5.4.0",
+    "@primeuix/themes": "^2.0.3",
+    "@primevue/forms": "^4.5.4",
     "@quasar/extras": "^1.16.4",
+    "@vuelidate/core": "^2.0.3",
+    "@vuelidate/validators": "^2.0.4",
     "axios": "^1.13.4",
     "daypilot-pro-vue": "^0.0.0",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
+    "primevue": "^4.5.4",
     "quasar": "^2.16.0",
     "vite": "^7.3.1",
     "vue": "^3.5.22",
-    "vue-router": "^4.0.0"
+    "vue-router": "^4.0.0",
+    "vue-yup-form": "^1.0.8",
+    "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.14.0",
     "@quasar/app-vite": "^2.1.0",
     "autoprefixer": "^10.4.24",
-    "eslint": "^10.0.0",
-    "eslint-plugin-vue": "^4.7.1",
     "globals": "^16.4.0",
-    "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
     "vite-plugin-checker": "^0.12.0",
     "vue-eslint-parser": "^2.0.3"

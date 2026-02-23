@@ -1,10 +1,10 @@
 export class Dimensions {
-  constructor(id,length, bream, draft) {
+  constructor(id,length, beam, draft, name) {
     this.id = id;
-    this.length = length;
-    this.bream = bream;
-    this.draft = draft;
-
+    this.maxLength = length;
+    this.maxBeam = beam;
+    this.maxDraft = draft;
+    this.name = name;
   }
 
   static fromJson(json) {
@@ -12,7 +12,8 @@ export class Dimensions {
       json.id,
       json.maxLength,
       json.maxBeam,
-      json.maxDraft
+      json.maxDraft,
+      json.name
     );
   }
 

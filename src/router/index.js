@@ -28,7 +28,6 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   })
   Router.beforeEach((to, from, next) => {
 
-    console.log(useAuthStore())
     if (to.matched.some(record => record.meta.requiresAuth && !useAuthStore().isAuthenticated)) {
       next({ name: 'login', query: { next: to.fullPath } })
     } else {

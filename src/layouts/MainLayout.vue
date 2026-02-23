@@ -31,11 +31,14 @@
           Menú
         </q-item-label>
 
+        <template v-if="linklist">
         <EssentialLink
-          v-for="link in linksList"
+          v-for="link in linklist"
           :key="link.title"
           v-bind="link"
         />
+        </template>
+
       </q-list>
     </q-drawer>
 
@@ -49,7 +52,34 @@
 import { defineComponent, ref } from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 
-const linksList = [
+export default defineComponent({
+  name: 'MainLayout',
+
+  components: {
+    EssentialLink
+  },
+
+  setup () {
+
+
+
+    return {
+
+
+    }
+  }
+})
+</script>
+<script setup>
+
+import {useRouter} from "vue-router";
+import {useAuthStore} from '../stores/auth.js'
+
+const router = useRouter();
+const auth = useAuthStore();
+const leftDrawerOpen = ref(false)
+
+const AdminCompanyLinkList = ref([
   {
     title: 'Reservas entrantes',
     icon: '',
@@ -59,11 +89,6 @@ const linksList = [
     title: 'Ocupación',
     icon: '',
     link: '/occupancy'
-  },
-  {
-    title: 'Barcos',
-    icon: '',
-    link: '/boats'
   },
   {
     title: 'Estado amarres',
@@ -79,35 +104,69 @@ const linksList = [
     title: 'Puertos',
     icon: '',
     link: '/ports'
-  }
-]
-
-export default defineComponent({
-  name: 'MainLayout',
-
-  components: {
-    EssentialLink
   },
-
-  setup () {
-
-
-
-    return {
-      linksList,
-
-    }
+  {
+    title: 'Gestión de usuarios',
+    icon: '',
+    link:'/users'
+  },
+  {
+    title: 'Gestión de zonas',
+    icon: '',
+    link:'/zones'
+  },
+  {
+    title: 'Gestión de dimensiones',
+    icon: '',
+    link:'/dimensions'
+  },
+  {
+    title: 'Gestión de precios',
+    icon: '',
+    link:'/price-configurations'
   }
-})
-</script>
-<script setup>
+  ,
+  {
+    title: 'Gestión de Categorias',
+    icon: '',
+    link:'/mooring-categories'
+  }
+])
+const PortAdminLinkList =ref( [
+  {
+    title: 'Reservas entrantes',
+    icon: '',
+    link: '/bookings/incoming'
+  },
+  {
+    title: 'Ocupación',
+    icon: '',
+    link: '/occupancy'
+  },
+  {
+    title: 'Estado amarres',
+    icon: '',
+    link: '/states/moorings'
+  },
+  {
+    title: 'Modificar reservas',
+    icon: '',
+    link: '/bookings/edit'
+  }
+])
 
-import {useRouter} from "vue-router";
-import {useAuthStore} from '../stores/auth.js'
+const linklist = getLinksList();
 
-const router = useRouter();
-const auth = useAuthStore();
-const leftDrawerOpen = ref(false)
+function getLinksList(){
+  switch (auth.role){
+    case "ADMIN_COMPANY" :
+      return AdminCompanyLinkList;
+    case "ADMIN_PORT":
+      return PortAdminLinkList;
+
+  }
+}
+
 
 if(!auth.isAuthenticated){
    router.push('/login')

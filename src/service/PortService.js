@@ -33,7 +33,7 @@ export class PortService {
 
   static async add(port) {
     try {
-      const response = await api.post(`/api/v1/ports`, port);
+      const response = await api.post(`ports`, port);
       return response.data;
     } catch (error) {
       console.error("Error:", error);

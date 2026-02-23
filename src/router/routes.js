@@ -50,10 +50,62 @@ const routes = [
     ],
     meta: {requiresAuth: true}
   },
-
-
-  // Always leave this as last one,
-  // but you can also remove it
+  {
+    path: `/zones`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ZonesPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/zones/:id`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/ZonePage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/moorings/:id`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/MooringEditPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/dimensions`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/DimensionsPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/price-configurations`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PriceConfiguration.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/mooring-categories`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/MooringCategories.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/mooring-categories/:id`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/MooringCategoryPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')

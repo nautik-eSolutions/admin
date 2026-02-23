@@ -11,4 +11,24 @@ export class MooringDimensionsService {
       console.log("Error: " + error);
     }
   }
+
+}
+
+export async function getDimensionsByPort(portId){
+  try {
+    const response = await api.get(`dimensions/ports/${portId}`);
+    return response.data.map(item => Dimensions.fromJson(item))
+  }catch (error){
+
+  }
+}
+
+export async function updateMooringDimension(dimension){
+  return await api.patch(`dimensions/${dimension.id}`, dimension);
+}
+export async function deleteMooringDimension(id){
+  return await api.delete(`dimensions/${id}`)
+}
+export async function createMooringDimension(portId, dimension){
+  return await api.post(`dimensions/ports/${portId}`,dimension)
 }

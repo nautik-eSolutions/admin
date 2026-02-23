@@ -14,11 +14,16 @@ export default defineBoot(({ app }) => {
   api.interceptors.request.use(config => {
     const authStore = useAuthStore()
     if (authStore.token) {
-      console.log(authStore.token)
       config.headers.Authorization = `Bearer ${authStore.token}`
     }
     return config
   })
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      return Promise.reject(error)
+    }
+  )
 
 
   app.config.globalProperties.$axios = axios
