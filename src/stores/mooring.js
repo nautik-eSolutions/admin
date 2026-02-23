@@ -5,7 +5,7 @@ import { Mooring } from '../model/Mooring'
 import {
   getMoorings,
   getMooringById,
-  getMooringByZoneId,
+  getMooringByZoneId, getMooringsByCategory,
 } from '../service/MooringService.js'
 import { MooringService } from '../service/MooringService.js'
 
@@ -57,14 +57,12 @@ export const useMooring = defineStore('mooring', {
       }
     },
 
-    async getMooringsByCategory(portId, categoryId) {
+    async getMooringsByCategory( categoryId) {
       try {
-        const resp = await getMoorings(portId)
+        const resp = await getMooringsByCategory(categoryId)
         if (!isOk(resp)) throw new Error()
-        const all = resp.data.map(Mooring.fromJson)
-        this.moorings = all.filter(
-          (m) => String(m.categoryId) === String(categoryId)
-        )
+        this.moorings = resp.data.map(Mooring.fromJson)
+
         return this.moorings
       } catch (e) {
         onError(e, 'Error al obtener los amarres por categoría.')

@@ -41,7 +41,7 @@ onMounted(async () => {
 })
 
 function goToCategory(id) {
-  router.push({ name: 'MooringCategoryDetail', params: { id } })
+  router.push(`mooring-categories/${id}`)
 }
 
 function openCreateDialog() {
