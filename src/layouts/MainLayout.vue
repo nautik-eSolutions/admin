@@ -129,7 +129,7 @@ const AdminCompanyLinkList = ref([
   {
     title: 'Gestión de Categorias',
     icon: '',
-    link:'/moorings-categories'
+    link:'/mooring-categories'
   }
 ])
 const PortAdminLinkList =ref( [

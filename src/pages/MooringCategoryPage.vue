@@ -13,20 +13,13 @@ const router = useRouter()
 const $q = useQuasar()
 const mooringCategoryStore = useMooringCategoryStore()
 const mooringStore = useMooring()
-const zone = ref();
-const dimensions = ref()
-const mounted = ref(false)
+
 onMounted(async () => {
   await mooringCategoryStore.getMooringCategory(PORT_ID, route.params.id)
   await mooringStore.getMooringsByCategory(PORT_ID, route.params.id)
 
-  console.log(mooringCategoryStore.category)
-  zone.value = await ZoneService.getZoneById(mooringCategoryStore.category.zoneId)
-
 
 })
-if (mounted.value){
-}
 
 const mooringsColumns = [
   {name: 'number', label: 'Número', field: 'number', align: 'left', sortable: true},
@@ -102,7 +95,7 @@ function confirmDelete(mooring) {
             <div class="col-12 col-md-4">
               <div class="text-caption text-grey-6 uppercase">Dimensiones</div>
               <div class="text-subtitle1 text-weight-medium">
-                {{ mooringCategoryStore.category.dimensionsMaxLength +`x`+ mooringCategoryStore.category.dimensionsMaxBeam +`x`+ mooringCategoryStore.category.dimensionsMaxDraft  ?? '—' }}
+                {{ mooringCategoryStore.category.dimensionsMaxLength +` m x`+ mooringCategoryStore.category.dimensionsMaxBeam +` m x`+ mooringCategoryStore.category.dimensionsMaxDraft + ` m` ?? '—' }}
               </div>
             </div>
             <div class="col-12 col-md-4">

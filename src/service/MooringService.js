@@ -22,6 +22,9 @@ export class MooringService {
   }
 }
 
+export async function getMooringsByCategory(categoryId){
+  return await api.get(`mooring/category/${categoryId}`)
+}
 
 export async function  getMoorings(portId){
   return await api.get(`moorings/ports/${portId}`)
