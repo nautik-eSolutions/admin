@@ -106,6 +106,11 @@ const AdminCompanyLinkList = ref([
     link:'/users'
   },
   {
+    title: 'Gestión de puertos',
+    icon: '',
+    link:'/ports'
+  },
+  {
     title: 'Gestión de zonas',
     icon: '',
     link:'/zones'
@@ -122,7 +127,7 @@ const AdminCompanyLinkList = ref([
   }
   ,
   {
-    title: 'Gestión de Categorias',
+    title: 'Gestión de categorias',
     icon: '',
     link:'/mooring-categories'
   }

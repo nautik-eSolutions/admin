@@ -20,14 +20,14 @@ const routes = [
     ],
     meta: {requiresAuth: true}
   },  {
-    path: '/ports',
+    path: '/ports-dev',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/PortsList.vue') }
     ],
     meta: {requiresAuth: true}
   },{
-    path: `/ports/:portId`,
+    path: `/ports-dev/:portId`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/PortInfo.vue') }
@@ -106,6 +106,23 @@ const routes = [
     ],
     meta: {requiresAuth: true}
   },
+  {
+    path: `/ports`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PortsPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/ports/:id`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/PortPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  }
+  ,
   {
     path: '/:catchAll(.*)*',
     component: () => import('pages/ErrorNotFound.vue')
