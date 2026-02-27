@@ -12,6 +12,20 @@ export class PortService {
       return [];
     }
   }
+  static async getAllByCompanyAdmin() {
+    try {
+      const response = await api.get('ports/company/administrator');
+      return response.data.map(item => Port.fromJson(item));
+    } catch (error) {
+      console.error("Error:", error);
+      return [];
+    }
+  }
+  static async getPortByAdmin() {
+      return  await api.get('ports/admin');
+  }
+
+
 
   static async getOne(id) {
     try{
