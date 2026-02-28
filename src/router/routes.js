@@ -43,10 +43,10 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
-    path: `/users`,
+    path: `/administrator-management`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/UserManagement.vue') }
+      { path: '', component: () => import('pages/PortAdminsPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
