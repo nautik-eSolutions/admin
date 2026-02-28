@@ -36,6 +36,15 @@ export class PortService {
       console.error("Error:", error);
     }
   }
+  static async getPortByPortAdmin() {
+    try{
+      const response = await api.get(`ports/port-administrator`);
+      const port =  Port.fromJson(response.data);
+      return port;
+    }catch(error){
+      console.error("Error:", error);
+    }
+  }
 
   static async delete(id) {
     try {

@@ -35,14 +35,6 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
-    path: `/occupancy`,
-    component: () => import('layouts/MainLayout.vue'),
-    children: [
-      { path: '', component: () => import('pages/OccupancyDisplay.vue') }
-    ],
-    meta: {requiresAuth: true}
-  },
-  {
     path: `/administrator-management`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
@@ -115,12 +107,24 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
-    path: `/ports/:id`,
+    path: `/ports/:id?`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PortPage.vue') }
+      { path: '', component: () => import('pages/ports/PortPageCoAdmin.vue') }
     ],
     meta: {requiresAuth: true}
+  },
+  {
+    path: '/occupancy',
+    component: () => import('layouts/MainLayout.vue'),
+    children : [
+      { path: '', component: () => import('pages/OccupancySearchPage.vue') }
+    ]
+  },
+  {
+    path: '/occupancy/mooring-category/:id/:startDate/:endDate',
+    name: 'occupancy',
+    component: () => import('pages/OccupancyDisplay.vue')
   }
   ,
   {

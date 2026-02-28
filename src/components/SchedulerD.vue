@@ -23,7 +23,8 @@ const resources = ref([])
 const events = ref([])
 const props = defineProps({
   moorings:Array,
-  bookings:Array
+  bookings:Array,
+  days: Array
 })
 
 

@@ -2,8 +2,8 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { PortService } from '../service/PortService.js'
-import { getPortImages, uploadPortImage } from '../service/PortImageService.js'
+import { PortService } from '../../service/PortService.js'
+import { getPortImages, uploadPortImage } from '../../service/PortImageService.js'
 
 const route = useRoute()
 const $q = useQuasar()
@@ -13,7 +13,6 @@ const images = ref([])
 const uploading = ref(false)
 const fileInput = ref(null)
 
-// Campos mock editables
 const mockFields = ref({
   vhfChannel: '09',
   maxBoatLength: 25,
@@ -37,7 +36,7 @@ const mockSnapshot = ref({})
 
 onMounted(async () => {
   const [portData, imagesData] = await Promise.all([
-    PortService.getOne(route.params.id),
+    PortService.getPortByPortAdmin(),
     getPortImages(route.params.id).then(r => r.data).catch(() => []),
   ])
   port.value = portData
@@ -55,7 +54,6 @@ function cancelEditMock() {
 }
 
 function saveEditMock() {
-  // Aquí se llamará al endpoint cuando esté disponible
   $q.notify({ type: 'positive', position: 'top-right', message: 'Datos actualizados correctamente.' })
   editingMock.value = false
 }

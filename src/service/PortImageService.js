@@ -3,6 +3,9 @@ import { api } from 'boot/axios.js'
 export async function getPortImages(portId) {
   return await api.get(`ports/${portId}/images`)
 }
+export async function getPortImagesPortAdmin() {
+  return await api.get(`ports/images`)
+}
 
 export async function uploadPortImage(portId, file) {
   const formData = new FormData()

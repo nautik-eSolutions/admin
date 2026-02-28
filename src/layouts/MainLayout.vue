@@ -97,12 +97,7 @@ const PortAdminLinkList = ref([
     link: '/bookings/edit'
   },
   {
-    title: 'Gestión de usuarios',
-    icon: '',
-    link: '/users'
-  },
-  {
-    title: 'Gestión de puertos',
+    title: 'Gestión de puerto',
     icon: '',
     link: '/ports'
   },
