@@ -15,7 +15,7 @@
           NAUTIK enterprise
         </q-toolbar-title>
 
-        <q-btn push color="red" label="Logout"  @click="onSubmit"/>
+        <q-btn push color="red" label="Logout" @click="onSubmit"/>
       </q-toolbar>
     </q-header>
 
@@ -32,24 +32,24 @@
         </q-item-label>
 
         <template v-if="linklist">
-        <EssentialLink
-          v-for="link in linklist"
-          :key="link.title"
-          v-bind="link"
-        />
+          <EssentialLink
+            v-for="link in linklist"
+            :key="link.title"
+            v-bind="link"
+          />
         </template>
 
       </q-list>
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue'
+import {defineComponent, ref} from 'vue'
 import EssentialLink from 'components/EssentialLink.vue'
 
 export default defineComponent({
@@ -59,14 +59,10 @@ export default defineComponent({
     EssentialLink
   },
 
-  setup () {
+  setup() {
 
 
-
-    return {
-
-
-    }
+    return {}
   }
 })
 </script>
@@ -103,36 +99,36 @@ const AdminCompanyLinkList = ref([
   {
     title: 'Gestión de usuarios',
     icon: '',
-    link:'/users'
+    link: '/users'
   },
   {
     title: 'Gestión de puertos',
     icon: '',
-    link:'/ports'
+    link: '/ports'
   },
   {
     title: 'Gestión de zonas',
     icon: '',
-    link:'/zones'
+    link: '/zones'
   },
   {
     title: 'Gestión de dimensiones',
     icon: '',
-    link:'/dimensions'
+    link: '/dimensions'
   },
   {
     title: 'Gestión de precios',
     icon: '',
-    link:'/price-configurations'
+    link: '/price-configurations'
   }
   ,
   {
     title: 'Gestión de categorias',
     icon: '',
-    link:'/mooring-categories'
+    link: '/mooring-categories'
   }
 ])
-const PortAdminLinkList =ref( [
+const PortAdminLinkList = ref([
   {
     title: 'Reservas entrantes',
     icon: '',
@@ -157,29 +153,28 @@ const PortAdminLinkList =ref( [
 
 const linklist = getLinksList();
 
-function getLinksList(){
-  switch (auth.role){
-    case "ADMIN_COMPANY" :
-      return AdminCompanyLinkList;
-    case "ADMIN_PORT":
-      return PortAdminLinkList;
+function getLinksList() {
+  if (auth.isCompanyAdmin) {
+    return AdminCompanyLinkList
+  } else {
+    return PortAdminLinkList;
 
   }
 }
 
 
-if(!auth.isAuthenticated){
-   router.push('/login')
+if (!auth.isAuthenticated) {
+  router.push('/login')
 }
 
-function toggleLeftDrawer () {
+function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
 const onSubmit = () => {
 
-   auth.logout()
-    router.push('/login')
+  auth.logout()
+  router.push('/login')
 
 }
 </script>
