@@ -19,9 +19,8 @@ export const useAuthStore = defineStore('myStore', {
         this.token = resp.data?.token?.token
         this.isAuthenticated = true
         this.role = resp.data?.role
-        if (!resp.data?.role === 'ADMIN_COMPANY') {
-          const portStore = usePortStore();
-          await portStore.setPortByAdmin();
+        if (resp.data?.role === 'ADMIN_PORT') {
+          usePortStore().portId = resp.data?.portId
         }
       }
     },

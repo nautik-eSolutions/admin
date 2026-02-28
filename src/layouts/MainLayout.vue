@@ -75,7 +75,7 @@ const router = useRouter();
 const auth = useAuthStore();
 const leftDrawerOpen = ref(false)
 
-const AdminCompanyLinkList = ref([
+const PortAdminLinkList = ref([
   {
     title: 'Reservas entrantes',
     icon: '',
@@ -128,7 +128,7 @@ const AdminCompanyLinkList = ref([
     link: '/mooring-categories'
   }
 ])
-const PortAdminLinkList = ref([
+const AdminCompanyLinkList = ref([
   {
     title: 'Reservas entrantes',
     icon: '',
@@ -154,9 +154,10 @@ const PortAdminLinkList = ref([
 const linklist = getLinksList();
 
 function getLinksList() {
-  if (auth.isCompanyAdmin) {
+  console.log(auth.role)
+  if (auth.role === 'ADMIN_COMPANY') {
     return AdminCompanyLinkList
-  } else {
+  } else if (auth.role === 'ADMIN_PORT') {
     return PortAdminLinkList;
 
   }

@@ -27,14 +27,8 @@ const portRules = [
 const onSubmit = async () => {
   await auth.loginUser(username.value, password.value)
 
-  if (auth.isAuthenticated) {
-    if (auth.isCompanyAdmin) {
-      const rawPorts = await PortService.getAllByCompanyAdmin()
-      ports.value = rawPorts.map(p => ({label: p.name, value: p.id}))
-      portDialogOpen.value = true
-    } else {
-      router.push('/')
-    }
+  if (auth.isAuthenticated){
+    router.push("/")
   }
 }
 
