@@ -8,7 +8,7 @@ import { usePortStore } from 'src/stores/port.js'
 export const useAuthStore = defineStore('myStore', {
   state: () => ({
     token: '',
-    isCompanyAdmin:false,
+    role:'false',
     isAuthenticated: false,
   }),
   actions: {
@@ -18,8 +18,8 @@ export const useAuthStore = defineStore('myStore', {
         this.isCompanyAdmin = resp.data?.isCompanyAdmin
         this.token = resp.data?.token?.token
         this.isAuthenticated = true
-
-        if (!resp.data?.isCompanyAdmin) {
+        this.role = resp.data?.role
+        if (!resp.data?.role === 'ADMIN_COMPANY') {
           const portStore = usePortStore();
           await portStore.setPortByAdmin();
         }
