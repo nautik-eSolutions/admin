@@ -22,8 +22,6 @@ const endDate = route.params.endDate;
 const mooringCategoryId = route.params.id;
 onMounted(async()=>{
 
-
-
   moorings.value = await mooringStore.getMoorings(PORT_ID)
   bookings.value = await bookingStore.getAllBookings(PORT_ID);
   console.log(bookings)
