@@ -82,6 +82,16 @@ const PortAdminLinkList = ref([
     link: '/bookings/incoming'
   },
   {
+    title: 'Entradas',
+    icon: '',
+    link: '/checkin'
+  },
+  {
+    title: 'Salidas',
+    icon: '',
+    link: '/checkout'
+  },
+  {
     title: 'Ocupación',
     icon: '',
     link: '/occupancy'
@@ -121,7 +131,8 @@ const PortAdminLinkList = ref([
     title: 'Gestión de categorias',
     icon: '',
     link: '/mooring-categories'
-  }
+  },
+
 ])
 const AdminCompanyLinkList = ref([
   {
