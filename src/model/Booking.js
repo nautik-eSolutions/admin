@@ -9,4 +9,15 @@ export class Booking{
     this.mooringNumber = mooringNumber;
     this.mooringId = mooringId;
   }
+  static fromJson(json) {
+    return new Booking(
+      json.id,
+      json.startDate,
+      json.endDate,
+      json.boatId,
+      json.bookingStatusId,
+      json.mooringNumber,
+      json.mooringId
+    )
+  }
 }

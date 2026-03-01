@@ -124,7 +124,10 @@ const routes = [
   {
     path: '/occupancy/mooring-category/:id/:startDate/:endDate',
     name: 'occupancy',
-    component: () => import('pages/OccupancyDisplay.vue')
+    component: () => import('layouts/MainLayout.vue'),
+    children : [
+      { path: '', component: () => import('pages/OccupancyDisplay.vue') }
+    ]
   }
   ,
   {

@@ -60,7 +60,7 @@ onMounted(() => {
 <template>
   <q-page padding>
     <div class="row justify-center">
-      <div class="col-2 col-md-3 col-lg-4">
+      <div class="col-4 col-md-4 col-lg-5">
         <q-card>
           <q-card-section>
             <div class="text-h5 q-mb-md">Buscar Disponibilidad</div>
