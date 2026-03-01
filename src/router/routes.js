@@ -128,6 +128,20 @@ const routes = [
     children : [
       { path: '', component: () => import('pages/OccupancyDisplay.vue') }
     ]
+  },
+  {
+    path: '/checkin',
+    component: () => import('layouts/MainLayout.vue'),
+    children : [
+      { path: '', component: () => import('pages/CheckInPage.vue') }
+    ]
+  },
+  {
+    path: '/checkout',
+    component: () => import('layouts/MainLayout.vue'),
+    children : [
+      { path: '', component: () => import('pages/CheckOutPage.vue') }
+    ]
   }
   ,
   {
