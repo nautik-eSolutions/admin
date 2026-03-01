@@ -44,7 +44,6 @@ const schedulerDays = computed(() => {
   }
   return schedulerStartDate.value.daysInYear()
 })
-
 function formatDateForScheduler(dateStr) {
   if (!dateStr) return null
   const [day, month, year] = dateStr.split('-')
@@ -52,7 +51,6 @@ function formatDateForScheduler(dateStr) {
 }
 
 onMounted(() => {
-
   events.value = props.bookings.map(booking => {
     return {
       id: booking.id,

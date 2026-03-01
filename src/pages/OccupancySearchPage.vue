@@ -63,7 +63,7 @@ onMounted(() => {
       <div class="col-4 col-md-4 col-lg-5">
         <q-card>
           <q-card-section>
-            <div class="text-h5 q-mb-md">Buscar Disponibilidad</div>
+            <div class="text-h5 q-mb-md">Ver ocupación</div>
 
             <q-form @submit="onSubmit" class="q-gutter-md">
               <q-select
