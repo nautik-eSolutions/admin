@@ -54,7 +54,7 @@ export const useOccupancyStore = defineStore('occupancy', {
           onError(this.error,$q)
           throw new Error(`Failed with Error: ${response.status}`);
         }
-
+        console.log(response)
         this.bookings = response.data.bookings.map(bookingData => Booking.fromJson(bookingData));
         this.moorings = response.data.moorings.map(mooringData => Mooring.fromJson(mooringData));
 

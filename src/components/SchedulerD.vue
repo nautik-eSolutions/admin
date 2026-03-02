@@ -5,16 +5,17 @@
       scale="Day"
       :startDate="schedulerStartDate"
       :days="schedulerDays"
-      :resources="props.moorings.map(mooring=>{return{name: mooring.number, id: mooring.id}})"
+      :resources="props.moorings.map(mooring=>{return{name: mooring.number, id: mooring.number}})"
       :events="events"
       height="100vh"
+
     />
   </template>
 </template>
 
 <script setup>
-import { DayPilot, DayPilotScheduler } from '@daypilot/daypilot-lite-vue'
-import { computed, onMounted, ref } from 'vue'
+import {DayPilot, DayPilotScheduler} from '@daypilot/daypilot-lite-vue'
+import {computed, onMounted, ref} from 'vue'
 
 const props = defineProps({
   moorings: Array,
@@ -25,6 +26,7 @@ const props = defineProps({
 
 const resources = ref([])
 const events = ref([])
+
 
 const schedulerStartDate = computed(() => {
   if (props.startDate) {
@@ -44,6 +46,7 @@ const schedulerDays = computed(() => {
   }
   return schedulerStartDate.value.daysInYear()
 })
+
 function formatDateForScheduler(dateStr) {
   if (!dateStr) return null
   const [day, month, year] = dateStr.split('-')
@@ -51,14 +54,15 @@ function formatDateForScheduler(dateStr) {
 }
 
 onMounted(() => {
-  events.value = props.bookings.map(booking => {
-    return {
-      id: booking.id,
-      start: formatDateForScheduler(booking.startDate),
-      end: formatDateForScheduler(booking.endDate),
-      resource: booking.mooringId,
-      text: `Reserva ${booking.id}`
+  events.value = props.bookings.map(booking=>{
+    return{
+      id:booking.id,
+      start:booking.startDate,
+      end:booking.endDate,
+      resource:booking.mooringNumber,
+      text:`Reserva ${booking.id}`
     }
   })
+  console.log(events)
 })
 </script>

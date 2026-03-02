@@ -13,13 +13,14 @@ const editingTime = ref(null);
 const checkIns = computed(() => occupancyStore.checkIns);
 
 const formattedDate = computed(() => {
-  return date.formatDate(selectedDate.value, 'DD/MM/YYYY');
+  return (date.formatDate(selectedDate.value, 'YYYY-MM-DD')).replace("/","-");
 });
 
 async function loadCheckIns (){
   loading.value = true;
   try {
-    await occupancyStore.getCheckInsByDate(selectedDate.value);
+
+    await occupancyStore.getCheckInsByDate(formattedDate.value);
   } finally {
     loading.value = false;
   }
