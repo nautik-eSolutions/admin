@@ -142,6 +142,13 @@ const routes = [
     children : [
       { path: '', component: () => import('pages/CheckOutPage.vue') }
     ]
+  },
+  {
+    path: '/fixed-moorings',
+    component: () => import('layouts/MainLayout.vue'),
+    children : [
+      { path: '', component: () => import('pages/FixedMooringRequests.vue') }
+    ]
   }
   ,
   {

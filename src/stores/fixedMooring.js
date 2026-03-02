@@ -6,7 +6,7 @@ import {
   getRequestById,
   reviewRequest,
   cancelRequest,
-} from '../service/fixedMooringService.js';
+} from '../service/FixedMooringService.js';
 
 const isOk = (resp) => resp?.status >= 200 && resp?.status < 300;
 

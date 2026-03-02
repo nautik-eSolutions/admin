@@ -132,6 +132,11 @@ const PortAdminLinkList = ref([
     icon: '',
     link: '/mooring-categories'
   },
+  {
+    title: 'Amarres fijos',
+    icon: '',
+    link: '/fixed-moorings'
+  },
 
 ])
 const AdminCompanyLinkList = ref([
