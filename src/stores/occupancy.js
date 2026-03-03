@@ -54,7 +54,6 @@ export const useOccupancyStore = defineStore('occupancy', {
           onError(this.error,$q)
           throw new Error(`Failed with Error: ${response.status}`);
         }
-        console.log(response)
         this.bookings = response.data.bookings.map(bookingData => Booking.fromJson(bookingData));
         this.moorings = response.data.moorings.map(mooringData => Mooring.fromJson(mooringData));
 
@@ -97,6 +96,7 @@ export const useOccupancyStore = defineStore('occupancy', {
 
         this.checkOuts = resp.data.map(item => CheckInOut.fromJson(item));
         this.selectedDate = date;
+        console.log(resp)
         return this.checkOuts;
       } catch (e) {
         onError(e, 'Error al obtener los check-outs del día.', $q);

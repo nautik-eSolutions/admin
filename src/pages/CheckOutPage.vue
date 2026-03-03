@@ -8,25 +8,18 @@ const occupancyStore = useOccupancyStore();
 
 const selectedDate = ref(date.formatDate(Date.now(), 'YYYY/MM/DD').replaceAll("/","-"));
 const loading = ref(false);
-const editingTime = ref(null);
 
 const checkOuts = computed(() => occupancyStore.checkOuts);
 const formattedDate = computed(() => date.formatDate(selectedDate.value, 'DD/MM/YYYY'));
 
 const columns = [
   {
-    name: 'status',
-    label: 'Estado',
-    field: 'hasArrived',
-    align: 'center',
-    style: 'width: 80px'
-  },
-  {
     name: 'time',
-    label: 'Hora Salida',
-    field: row => row.actualTime || row.scheduledTime || '--:--',
-    align: 'left',
-    style: 'width: 140px'
+    label: 'Hora',
+    field: row => row.scheduledTime.substring(11, 16),
+    align: 'center',
+    style: 'width: 100px',
+    sortable: true
   },
   {
     name: 'guest',
@@ -61,8 +54,7 @@ const stats = computed(() => ({
 async function loadCheckOuts() {
   loading.value = true;
   try {
-
-    await occupancyStore.getCheckOutsByDate((selectedDate.value));
+    await occupancyStore.getCheckOutsByDate(selectedDate.value);
   } finally {
     loading.value = false;
   }
@@ -73,26 +65,148 @@ async function onDateChange(value) {
   await loadCheckOuts();
 }
 
-async function toggleDeparture(checkOut) {
-  const newStatus = !checkOut.hasArrived;
-  const currentTime = newStatus ? date.formatDate(Date.now(), 'HH:mm') : null;
+function printList() {
+  const printWindow = window.open('', '_blank');
+  const printContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Check-Outs - ${formattedDate.value}</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+          max-width: 1000px;
+          margin: 0 auto;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+          border-bottom: 2px solid #333;
+          padding-bottom: 15px;
+        }
+        .header h1 {
+          margin: 0;
+          font-size: 24px;
+        }
+        .header p {
+          margin: 5px 0;
+          color: #666;
+        }
+        .stats {
+          display: flex;
+          justify-content: space-around;
+          margin-bottom: 30px;
+          background: #f5f5f5;
+          padding: 15px;
+          border-radius: 5px;
+        }
+        .stat-item {
+          text-align: center;
+        }
+        .stat-item .label {
+          font-size: 12px;
+          color: #666;
+        }
+        .stat-item .value {
+          font-size: 24px;
+          font-weight: bold;
+          margin-top: 5px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+        th, td {
+          border: 1px solid #ddd;
+          padding: 12px;
+          text-align: left;
+        }
+        th {
+          background-color: #333;
+          color: white;
+          font-weight: bold;
+        }
+        tr:nth-child(even) {
+          background-color: #f9f9f9;
+        }
+        tr.completed {
+          background-color: #e8f5e9;
+        }
+        .status {
+          text-align: center;
+          font-weight: bold;
+        }
+        .status.completed {
+          color: #2e7d32;
+        }
+        .status.pending {
+          color: #f57c00;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 30px;
+          padding-top: 15px;
+          border-top: 1px solid #ddd;
+          color: #666;
+          font-size: 12px;
+        }
+        @media print {
+          body { padding: 10px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>Listado de Check-Outs</h1>
+        <p>Fecha: ${formattedDate.value}</p>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 100px;">Hora</th>
+            <th>Huésped</th>
+            <th>Embarcación</th>
+            <th style="width: 120px;">Amarre</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${checkOuts.value.length === 0 ? `
+            <tr>
+              <td colspan="5" style="text-align: center; padding: 40px; color: #666;">
+                No hay check-outs programados
+              </td>
+            </tr>
+          ` : checkOuts.value.map(checkout => `
+            <tr">
+              <td style="text-align: center; font-family: monospace;">
+                ${checkout.scheduledTime.substring(11, 16)}
+              </td>
+              <td>${checkout.guestName}</td>
+              <td>${checkout.boatName}</td>
+              <td style="text-align: center; font-weight: bold;">
+                ${checkout.mooringNumber}
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
 
-  await occupancyStore.updateDepartureStatus(
-    checkOut.id,
-    newStatus,
-    currentTime
-  );
-}
+      <div class="footer">
+        Generado el ${date.formatDate(Date.now(), 'DD/MM/YYYY HH:mm')}
+      </div>
+    </body>
+    </html>
+  `;
 
-async function startEditingTime(checkOutId) {
-  editingTime.value = checkOutId;
-}
+  printWindow.document.write(printContent);
+  printWindow.document.close();
 
-async function updateTime(checkOut, newTime) {
-  if (newTime && newTime !== checkOut.actualTime) {
-    await occupancyStore.updateCheckOutTime(checkOut.id, newTime);
-  }
-  editingTime.value = null;
+  setTimeout(() => {
+    printWindow.print();
+  }, 250);
 }
 
 onMounted(() => {
@@ -107,7 +221,7 @@ onMounted(() => {
         <div class="flex items-center justify-between">
           <div>
             <h3 class="text-xl font-bold text-gray-800 mb-1">Check-Outs del Día</h3>
-            <p class="text-sm text-gray-600">Gestiona las salidas programadas</p>
+            <p class="text-sm text-gray-600">Visualiza las salidas programadas</p>
           </div>
 
           <div class="flex items-center gap-3">
@@ -130,32 +244,20 @@ onMounted(() => {
             >
               <q-tooltip>Recargar</q-tooltip>
             </q-btn>
+
+            <q-btn
+              icon="print"
+              color="primary"
+              unelevated
+              label="Imprimir"
+              @click="printList"
+              :disable="checkOuts.length === 0"
+            >
+              <q-tooltip v-if="checkOuts.length === 0">No hay datos para imprimir</q-tooltip>
+            </q-btn>
           </div>
         </div>
       </div>
-      <div class="grid grid-cols-3 gap-4 mb-6">
-        <q-card flat bordered>
-          <q-card-section class="text-center">
-            <div class="text-sm text-gray-600 mb-1">Total Check-Outs</div>
-            <div class="text-3xl font-bold text-gray-800">{{ stats.total }}</div>
-          </q-card-section>
-        </q-card>
-
-        <q-card flat bordered>
-          <q-card-section class="text-center">
-            <div class="text-sm text-gray-600 mb-1">Completados</div>
-            <div class="text-3xl font-bold text-green-600">{{ stats.completed }}</div>
-          </q-card-section>
-        </q-card>
-
-        <q-card flat bordered>
-          <q-card-section class="text-center">
-            <div class="text-sm text-gray-600 mb-1">Pendientes</div>
-            <div class="text-3xl font-bold text-orange-600">{{ stats.pending }}</div>
-          </q-card-section>
-        </q-card>
-      </div>
-
       <q-table
         flat
         bordered
@@ -163,56 +265,18 @@ onMounted(() => {
         :columns="columns"
         row-key="id"
         :loading="loading"
-        :rows-per-page-options="[10, 25, 50]"
+        :rows-per-page-options="[10, 25, 50, 0]"
         :pagination="{ rowsPerPage: 25 }"
         class="shadow-sm"
-        no-data-label="No hay check-outs programados"
-        :no-data-icon="null"
       >
-        <template v-slot:body-cell-status="props">
-          <q-td :props="props">
-            <q-checkbox
-              :model-value="props.row.hasArrived"
-              @update:model-value="toggleDeparture(props.row)"
-              color="green"
-              size="md"
-            />
-          </q-td>
-        </template>
-
         <template v-slot:body-cell-time="props">
           <q-td :props="props">
-            <div v-if="editingTime === props.row.id" class="q-pa-xs">
-              <q-input
-                :model-value="props.row.actualTime || props.row.scheduledTime"
-                mask="##:##"
-                fill-mask
-                dense
-                outlined
-                bg-color="white"
-                @blur="(e) => updateTime(props.row, e.target.value)"
-                @keyup.enter="(e) => updateTime(props.row, e.target.value)"
-                autofocus
-              >
-                <template v-slot:prepend>
-                  <q-icon name="schedule" size="xs" />
-                </template>
-              </q-input>
-            </div>
-
-            <div
-              v-else
-              @click="startEditingTime(props.row.id)"
-              class="cursor-pointer hover:bg-gray-100 rounded px-3 py-2 transition-colors inline-flex items-center gap-2"
-            >
+            <div class="flex items-center justify-center gap-2">
               <q-icon name="schedule" size="xs" color="primary" />
-              <span class="font-mono font-medium">{{ props.value }}</span>
-              <q-icon name="edit" size="xs" color="grey-5" />
-              <q-tooltip>Click para editar</q-tooltip>
+              <span class="font-mono font-medium">{{props.value}}</span>
             </div>
           </q-td>
         </template>
-
         <template v-slot:body-cell-guest="props">
           <q-td :props="props">
             <div class="font-medium text-gray-800">{{ props.value }}</div>
@@ -221,47 +285,34 @@ onMounted(() => {
         <template v-slot:body-cell-boat="props">
           <q-td :props="props">
             <div class="flex items-center gap-2 text-gray-700">
-              <q-icon name="sailing" size="sm" color="primary" />
               {{ props.value }}
             </div>
           </q-td>
         </template>
-
         <template v-slot:body-cell-mooring="props">
           <q-td :props="props">
             <q-chip
               color="primary"
               text-color="white"
-              size="sm"
-              icon="anchor"
+              size="md"
             >
               Amarre {{ props.value }}
             </q-chip>
           </q-td>
         </template>
-
-        <template v-slot:body="props">
+        <template v-slot:body-row="props">
           <q-tr
             :props="props"
             :class="{ 'bg-green-50': props.row.hasArrived }"
           >
-            <q-td
-              v-for="col in props.cols"
-              :key="col.name"
-              :props="props"
-            >
-              <component
-                :is="$options.components[`body-cell-${col.name}`] || 'div'"
-                v-bind="{ props: { ...props, value: col.value } }"
-              />
+            <q-td v-for="col in props.cols" :key="col.name" :props="props">
+              {{ col.value }}
             </q-td>
           </q-tr>
         </template>
-
         <template v-slot:loading>
           <q-inner-loading showing color="primary" />
         </template>
-
         <template v-slot:no-data>
           <div class="full-width row flex-center text-gray-500 q-gutter-sm q-py-xl">
             <q-icon name="event_busy" size="2em" />
