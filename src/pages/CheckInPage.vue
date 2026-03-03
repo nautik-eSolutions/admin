@@ -3,6 +3,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useQuasar, date } from 'quasar';
 import { useOccupancyStore } from 'src/stores/occupancy.js';
+import {printCheckInOut} from "src/utils/printList.js";
 
 const $q = useQuasar();
 const occupancyStore = useOccupancyStore();
@@ -48,7 +49,9 @@ const columns = [
     sortable: true
   }
 ];
-
+function printList() {
+  printCheckInOut("Check-in", formattedDate.value,checkIns)
+}
 const totalCount = computed(() => checkIns.value.length);
 
 async function loadCheckIns() {
@@ -100,6 +103,16 @@ onMounted(() => {
             >
               <q-tooltip>Recargar</q-tooltip>
             </q-btn>
+            <q-btn
+              icon="print"
+              color="primary"
+              unelevated
+              label="Imprimir"
+              @click="printList"
+              :disable="checkIns.length === 0"
+            >
+              <q-tooltip v-if="checkIns.length === 0">No hay datos para imprimir</q-tooltip>
+            </q-btn>
           </div>
         </div>
       </div>
@@ -133,7 +146,6 @@ onMounted(() => {
         <template v-slot:body-cell-boat="props">
           <q-td :props="props">
             <div class="flex items-center gap-2 text-gray-700">
-              <q-icon name="sailing" size="xs" />
               {{ props.value }}
             </div>
           </q-td>
