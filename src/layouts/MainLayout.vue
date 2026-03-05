@@ -133,6 +133,12 @@ const PortAdminLinkList = ref([
     link: '/mooring-categories'
   },
 
+  {
+    title: 'Gestión de reservas',
+    icon: '',
+    link: '/bookings'
+  }
+
 ])
 const AdminCompanyLinkList = ref([
   {

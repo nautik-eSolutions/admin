@@ -121,6 +121,7 @@ const routes = [
       { path: '', component: () => import('pages/OccupancySearchPage.vue') }
     ]
   },
+
   {
     path: '/occupancy/mooring-category/:id/:startDate/:endDate',
     name: 'occupancy',
@@ -141,6 +142,20 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children : [
       { path: '', component: () => import('pages/CheckOutPage.vue') }
+    ]
+  },
+  {
+    path: '/bookings',
+    component: () => import('layouts/MainLayout.vue'),
+    children : [
+      { path: '', component: () => import('pages/BookingsPage.vue') }
+    ]
+  },
+  {
+    path: '/bookings/:id',
+    component: () => import('layouts/MainLayout.vue'),
+    children : [
+      { path: '', component: () => import('pages/BookingPage.vue') }
     ]
   }
   ,
