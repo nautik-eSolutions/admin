@@ -136,22 +136,17 @@ const PortAdminLinkList = ref([
 ])
 const AdminCompanyLinkList = ref([
   {
-    title: 'Reservas entrantes',
+    title: 'Estadistícas',
     icon: '',
     link: '/bookings/incoming'
   },
   {
-    title: 'Ocupación',
+    title: 'User-management',
     icon: '',
-    link: '/occupancy'
+    link: '/administrator-management'
   },
   {
-    title: 'Estado amarres',
-    icon: '',
-    link: '/states/moorings'
-  },
-  {
-    title: 'Modificar reservas',
+    title: 'Ports',
     icon: '',
     link: '/bookings/edit'
   }
