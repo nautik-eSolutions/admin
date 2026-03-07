@@ -1,67 +1,35 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { PortService } from '../../service/PortService.js'
-import {getPortImages, getPortImagesPortAdmin, uploadPortImage} from '../../service/PortImageService.js'
-import {useAuthStore} from "stores/auth.js";
+import { getPortImages, getPortImagesPortAdmin, uploadPortImage } from '../../service/PortImageService.js'
+import { useAuthStore } from 'stores/auth.js'
+import {usePortStore} from "stores/port.js";
 
 const route = useRoute()
+const router = useRouter()
 const $q = useQuasar()
-
+const authStore = useAuthStore()
+const portStore = usePortStore();
 const port = ref(null)
 const images = ref([])
 const uploading = ref(false)
 const fileInput = ref(null)
-const authStore =useAuthStore();
-const mockFields = ref({
-  vhfChannel: '09',
-  maxBoatLength: 25,
-  maxBoatBeam: 8,
-  maxBoatDraft: 3.5,
-  totalBerths: 150,
-  fuelStation: true,
-  electricity: true,
-  water: true,
-  wifi: true,
-  crane: false,
-  travelift: false,
-  phone: '+34 971 000 000',
-  email: 'info@puerto.es',
-  openingHours: '08:00 - 20:00',
-  emergencyPhone: '112',
-})
-
-const editingMock = ref(false)
-const mockSnapshot = ref({})
 
 onMounted(async () => {
-
   const [portData, imagesData] = await Promise.all([
-     authStore.role === 'ADMIN_PORT' ? PortService.getPortByPortAdmin() : PortService.getById(route.params.id),
-     authStore.role ==='ADMIN_PORT'?
-       getPortImagesPortAdmin().then(r => r.data).catch(() => []):
-       getPortImages(route.params.id).then(r => r.data).catch(() => [])
-    ,
+    authStore.role === 'ADMIN_PORT'
+      ? portStore.getPortByPortAdmin()
+      : portStore.getPortById(route.params.id),
+    authStore.role === 'ADMIN_PORT'
+      ? getPortImagesPortAdmin().then(r => r.data).catch(() => [])
+      : getPortImages(route.params.id).then(r => r.data).catch(() => [])
   ])
   port.value = portData
+  console.log(portData)
   images.value = imagesData
 })
-
-function startEditMock() {
-  mockSnapshot.value = { ...mockFields.value }
-  editingMock.value = true
-}
-
-function cancelEditMock() {
-  mockFields.value = { ...mockSnapshot.value }
-  editingMock.value = false
-}
-
-function saveEditMock() {
-  $q.notify({ type: 'positive', position: 'top-right', message: 'Datos actualizados correctamente.' })
-  editingMock.value = false
-}
 
 function triggerFileInput() {
   fileInput.value.click()
@@ -75,9 +43,17 @@ async function handleFileSelected(event) {
   try {
     const resp = await uploadPortImage(route.params.id, file)
     images.value.push(resp.data)
-    $q.notify({ type: 'positive', position: 'top-right', message: 'Foto subida correctamente.' })
+    $q.notify({
+      type: 'positive',
+      position: 'top-right',
+      message: 'Foto subida correctamente.'
+    })
   } catch (error) {
-    $q.notify({ type: 'negative', position: 'top-right', message: 'Error al subir la foto.' })
+    $q.notify({
+      type: 'negative',
+      position: 'top-right',
+      message: 'Error al subir la foto.'
+    })
   } finally {
     uploading.value = false
     event.target.value = ''
@@ -90,7 +66,7 @@ async function handleFileSelected(event) {
     <div class="max-width-container q-mx-auto">
 
       <div class="row items-center q-mb-md">
-        <q-btn flat round dense icon="arrow_back" @click="$router.back()" class="q-mr-sm" />
+        <q-btn flat round dense icon="arrow_back" @click="router.back()" class="q-mr-sm" />
         <div class="text-h5 text-weight-bold">Detalle del Puerto</div>
       </div>
 
@@ -119,95 +95,88 @@ async function handleFileSelected(event) {
           <q-card-section class="q-pa-lg">
             <div class="row items-center justify-between q-mb-md">
               <div class="text-overline text-grey-7">Datos Técnicos</div>
-              <div v-if="!editingMock">
-                <q-btn flat dense icon="edit" label="Editar" @click="startEditMock" />
-              </div>
-              <div v-else class="q-gutter-sm">
-                <q-btn flat dense label="Cancelar" @click="cancelEditMock" />
-                <q-btn color="primary" dense unelevated label="Guardar" @click="saveEditMock" />
+              <div>
+                <q-btn
+                  flat
+                  dense
+                  icon="edit"
+                  label="Editar"
+                  @click="router.push(`/ports/${port.id}/edit`)"
+                />
               </div>
             </div>
 
             <div class="row q-col-gutter-lg">
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Canal VHF</div>
-                <q-input v-if="editingMock" v-model="mockFields.vhfChannel" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.vhfChannel }}</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.vhfChannel || '-' }}
+                </div>
               </div>
 
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Eslora máx. (m)</div>
-                <q-input v-if="editingMock" v-model.number="mockFields.maxBoatLength" type="number" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.maxBoatLength }} m</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.maxBoatLength ? port.maxBoatLength + ' m' : '-' }}
+                </div>
               </div>
 
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Manga máx. (m)</div>
-                <q-input v-if="editingMock" v-model.number="mockFields.maxBoatBeam" type="number" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.maxBoatBeam }} m</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.maxBoatBeam ? port.maxBoatBeam + ' m' : '-' }}
+                </div>
               </div>
 
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Calado máx. (m)</div>
-                <q-input v-if="editingMock" v-model.number="mockFields.maxBoatDraft" type="number" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.maxBoatDraft }} m</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.maxBoatDraft ? port.maxBoatDraft + ' m' : '-' }}
+                </div>
               </div>
 
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Total amarres</div>
-                <q-input v-if="editingMock" v-model.number="mockFields.totalBerths" type="number" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.totalBerths }}</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.moorings || '-' }}
+                </div>
               </div>
 
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Horario</div>
-                <q-input v-if="editingMock" v-model="mockFields.openingHours" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.openingHours }}</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.openingHours || '-' }}
+                </div>
               </div>
 
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Teléfono</div>
-                <q-input v-if="editingMock" v-model="mockFields.phone" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.phone }}</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.phone || '-' }}
+                </div>
               </div>
 
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Email</div>
-                <q-input v-if="editingMock" v-model="mockFields.email" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.email }}</div>
-              </div>
-
-              <div class="col-12 col-md-4">
-                <div class="text-caption text-grey-6 uppercase">Teléfono emergencias</div>
-                <q-input v-if="editingMock" v-model="mockFields.emergencyPhone" dense outlined />
-                <div v-else class="text-subtitle1 text-weight-medium">{{ mockFields.emergencyPhone }}</div>
+                <div class="text-subtitle1 text-weight-medium">
+                  {{ port.email || '-' }}
+                </div>
               </div>
             </div>
 
             <div class="text-overline text-grey-7 q-mt-lg q-mb-sm">Servicios</div>
             <div class="row q-gutter-md">
-              <template v-for="(value, key) in {
+              <template v-for="(label, key) in {
                 fuelStation: 'Gasolinera',
-                electricity: 'Electricidad',
-                water: 'Agua',
-                wifi: 'WiFi',
-                crane: 'Grúa',
-                travelift: 'Travel lift',
+                travelLift: 'Travel Lift',
+                crane: 'Grúa'
               }" :key="key">
                 <div class="row items-center q-gutter-xs">
-                  <q-toggle
-                    v-if="editingMock"
-                    v-model="mockFields[key]"
-                    :label="value"
-                    color="primary"
+                  <q-icon
+                    :name="port[key] ? 'check_circle' : 'cancel'"
+                    :color="port[key] ? 'positive' : 'grey-4'"
                   />
-                  <template v-else>
-                    <q-icon
-                      :name="mockFields[key] ? 'check_circle' : 'cancel'"
-                      :color="mockFields[key] ? 'positive' : 'grey-4'"
-                    />
-                    <span :class="mockFields[key] ? 'text-grey-9' : 'text-grey-5'">{{ value }}</span>
-                  </template>
+                  <span :class="port[key] ? 'text-grey-9' : 'text-grey-5'">{{ label }}</span>
                 </div>
               </template>
             </div>

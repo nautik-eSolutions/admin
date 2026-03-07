@@ -89,8 +89,10 @@ export const usePortStore = defineStore('port', {
         if (!isOk(resp)) throw new Error()
         const updated = Port.fromJson(resp.data)
         const idx = this.ports.findIndex(p => p.id === id)
+
         if (idx !== -1) this.ports[idx] = updated
         if (this.port?.id === id) this.port = updated
+
         Notify.create({ type: 'positive', message: 'Puerto actualizado correctamente' })
         return updated
       } catch (e) {
