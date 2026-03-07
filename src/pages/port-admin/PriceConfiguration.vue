@@ -1,7 +1,7 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
 import {useQuasar} from 'quasar'
-import {usePriceConfigurationStore} from '../../stores/priceConfiguration.js'
+import {usePriceConfigurationStore} from 'stores/priceConfiguration.js'
 import {usePortStore} from "stores/port.js";
 const portStore = usePortStore()
 

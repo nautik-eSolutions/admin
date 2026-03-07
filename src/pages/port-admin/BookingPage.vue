@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useBookingStore } from '../../stores/booking'
+import { useBookingStore } from 'stores/booking.js'
 import { date } from 'quasar'
 
 const route = useRoute()

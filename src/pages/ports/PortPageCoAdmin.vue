@@ -76,17 +76,6 @@ async function handleFileSelected(event) {
           <q-card-section class="q-pa-lg">
             <div class="row items-baseline q-gutter-sm q-mb-xs">
               <span class="text-h4 text-weight-bold text-grey-9">{{ port.name }}</span>
-              <q-badge outline color="primary" label="Puerto Activo" />
-            </div>
-            <div class="row q-gutter-md text-subtitle1 text-grey-7">
-              <div class="row items-center">
-                <q-icon name="location_city" class="q-mr-xs" />
-                {{ port.cityName }}
-              </div>
-              <div class="row items-center">
-                <q-icon name="business" class="q-mr-xs" />
-                {{ port.companyName }}
-              </div>
             </div>
           </q-card-section>
 
@@ -138,7 +127,7 @@ async function handleFileSelected(event) {
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Total amarres</div>
                 <div class="text-subtitle1 text-weight-medium">
-                  {{ port.moorings || '-' }}
+                  {{ port.totalMoorings || '-' }}
                 </div>
               </div>
 
@@ -152,7 +141,7 @@ async function handleFileSelected(event) {
               <div class="col-12 col-md-4">
                 <div class="text-caption text-grey-6 uppercase">Teléfono</div>
                 <div class="text-subtitle1 text-weight-medium">
-                  {{ port.phone || '-' }}
+                  {{ port.phoneNumber || '-' }}
                 </div>
               </div>
 

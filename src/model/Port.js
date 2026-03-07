@@ -14,7 +14,7 @@ export class Port {
     crane,
     lon,
     lat,
-    phone,
+    phoneNumber,
     email,
     openingHours
   ) {
@@ -32,7 +32,7 @@ export class Port {
     this.crane = crane;
     this.lon = lon;
     this.lat = lat;
-    this.phone = phone;
+    this.phoneNumber = phoneNumber;
     this.email = email;
     this.openingHours = openingHours;
   }
@@ -53,7 +53,7 @@ export class Port {
       json.crane,
       json.lon,
       json.lat,
-      json.phone,
+      json.phoneNumber,
       json.email,
       json.openingHours
     );

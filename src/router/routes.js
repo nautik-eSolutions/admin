@@ -28,6 +28,13 @@ const routes = [
     ]
   },
   {
+    path: '/ports/:id/edit',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {path: '', component: () => import('pages/company-admin/CreatePort.vue')}
+    ]
+  },
+  {
     path: '/ports-dev',
     component: () => import('layouts/MainLayout.vue'),
     children: [

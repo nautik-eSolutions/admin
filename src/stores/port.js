@@ -111,5 +111,6 @@ export const usePortStore = defineStore('port', {
         onError(e, 'Error al eliminar el puerto.')
       }
     },
-  }
+  },
+  persist:true
 })

@@ -1,4 +1,3 @@
-<!-- CheckIns.vue (diseño exacto al de CheckOuts) -->
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useQuasar, date } from 'quasar';

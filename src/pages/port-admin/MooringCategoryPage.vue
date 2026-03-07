@@ -2,8 +2,8 @@
 import { onMounted, ref, reactive } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { useMooringCategoryStore } from '../../stores/mooringCategory'
-import { useMooring } from '../../stores/mooring'
+import { useMooringCategoryStore } from 'stores/mooringCategory.js'
+import { useMooring } from 'stores/mooring.js'
 
 const PORT_ID = 1
 

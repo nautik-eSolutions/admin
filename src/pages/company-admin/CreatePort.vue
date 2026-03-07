@@ -1,12 +1,13 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { usePortStore } from 'stores/port.js'
 import { CityService } from '../../service/CityService.js'
 
 const $q = useQuasar()
 const router = useRouter()
+const route = useRoute()
 const portStore = usePortStore()
 
 const cityOptions = ref([])
@@ -32,10 +33,14 @@ const form = ref({
   crane: false,
   lon: null,
   lat: null,
-  phone: '',
+  phoneNumber: '',
   email: '',
   openingHours: ''
 })
+
+const isEditMode = computed(() => !!route.params.id)
+const pageTitle = computed(() => isEditMode.value ? 'Editar Puerto' : 'Añadir Nuevo Puerto')
+const submitButtonLabel = computed(() => isEditMode.value ? 'Actualizar Puerto' : 'Crear Puerto')
 
 const rules = {
   required: val => !!val || 'Este campo es obligatorio.',
@@ -51,6 +56,11 @@ onMounted(async () => {
   try {
     const citiesData = await CityService.getAll()
     cityOptions.value = citiesData.map(c => ({ label: c.name, value: c.name }))
+
+    if (isEditMode.value) {
+      await loadPortData()
+    }
+
     await initMap()
   } catch (error) {
     $q.notify({
@@ -63,22 +73,59 @@ onMounted(async () => {
   }
 })
 
+async function loadPortData() {
+  try {
+    const port = await portStore.getPortById(route.params.id)
+
+    form.value = {
+      name: port.name || '',
+      vhfChannel: port.vhfChannel || null,
+      cityName: port.cityName || null,
+      fuelStation: port.fuelStation || false,
+      travelLift: port.travelLift || false,
+      crane: port.crane || false,
+      lon: port.lon || null,
+      lat: port.lat || null,
+      phoneNumber: port.phoneNumber || '',
+      email: port.email || '',
+      openingHours: port.openingHours || ''
+    }
+
+    if (port.lat && port.lon) {
+      selectedPosition.value = { lat: port.lat, lng: port.lon }
+      mapCenter.value = { lat: port.lat, lng: port.lon }
+    }
+  } catch (error) {
+    $q.notify({
+      type: 'negative',
+      position: 'top-right',
+      message: 'Error al cargar el puerto.'
+    })
+  }
+}
+
 async function initMap() {
   if (!window.L) {
     await loadLeaflet()
   }
   const L = window.L
-  map.value = L.map('map').setView([mapCenter.value.lat, mapCenter.value.lng], 6)
+  map.value = L.map('map').setView([mapCenter.value.lat, mapCenter.value.lng], isEditMode.value ? 12 : 6)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors',
+    attribution: '©PALANTIR',
     maxZoom: 19
   }).addTo(map.value)
+
   const bounds = L.latLngBounds(
     L.latLng(spainBounds.minLat, spainBounds.minLng),
     L.latLng(spainBounds.maxLat, spainBounds.maxLng)
   )
 
   map.value.setMaxBounds(bounds)
+
+  if (selectedPosition.value) {
+    marker.value = L.marker([selectedPosition.value.lat, selectedPosition.value.lng]).addTo(map.value)
+  }
+
   map.value.on('click', (e) => {
     const { lat, lng } = e.latlng
     if (lat < spainBounds.minLat || lat > spainBounds.maxLat ||
@@ -131,7 +178,9 @@ async function onSubmit() {
     })
     return
   }
+
   loading.value = true
+  console.log(form.value)
   try {
     const payload = {
       name: form.value.name,
@@ -142,37 +191,65 @@ async function onSubmit() {
       crane: form.value.crane,
       lon: form.value.lon,
       lat: form.value.lat,
-      phoneNumber: form.value.phone || null,
+      phoneNumber: form.value.phoneNumber || null,
       email: form.value.email || null,
       openingHours: form.value.openingHours || null
     }
-    console.log(payload)
-    const port  = await portStore.createPort(payload)
 
-    await router.push('/ports/'+ port.id)
+    let port
+    if (isEditMode.value) {
+      port = await portStore.updatePort(route.params.id, payload)
+      $q.notify({
+        type: 'positive',
+        position: 'top-right',
+        message: 'Puerto actualizado correctamente.'
+      })
+    } else {
+      port = await portStore.createPort(payload)
+      $q.notify({
+        type: 'positive',
+        position: 'top-right',
+        message: 'Puerto creado correctamente.'
+      })
+    }
+
+    await router.push('/ports/' + port.id)
   } catch (error) {
+    const message = error.response?.data?.detail ||
+      (isEditMode.value ? 'Error al actualizar el puerto.' : 'Error al crear el puerto.')
+    $q.notify({
+      type: 'negative',
+      position: 'top-right',
+      message
+    })
   } finally {
     loading.value = false
   }
 }
 
 function onReset() {
-  form.name = ''
-  form.vhfChannel = null
-  form.cityName = null
-  form.fuelStation = false
-  form.travelLift = false
-  form.crane = false
-  form.lon = null
-  form.lat = null
-  form.phone = ''
-  form.email = ''
-  form.openingHours = ''
-  selectedPosition.value = null
+  if (isEditMode.value) {
+    loadPortData()
+  } else {
+    form.value = {
+      name: '',
+      vhfChannel: null,
+      cityName: null,
+      fuelStation: false,
+      travelLift: false,
+      crane: false,
+      lon: null,
+      lat: null,
+      phoneNumber: '',
+      email: '',
+      openingHours: ''
+    }
+    selectedPosition.value = null
 
-  if (marker.value && map.value) {
-    map.value.removeLayer(marker.value)
-    marker.value = null
+    if (marker.value && map.value) {
+      map.value.removeLayer(marker.value)
+      marker.value = null
+    }
   }
 }
 
@@ -194,7 +271,7 @@ function goBack() {
           class="q-mr-md"
         />
         <div class="col">
-          <h4 class="q-my-none text-weight-bold">Añadir Nuevo Puerto</h4>
+          <h4 class="q-my-none text-weight-bold">{{ pageTitle }}</h4>
           <p class="text-grey-7 q-mb-none">Complete la información del puerto</p>
         </div>
       </div>
@@ -233,7 +310,7 @@ function goBack() {
               </div>
               <div class="col-12 col-md-6">
                 <q-input
-                  v-model="form.phone"
+                  v-model="form.phoneNumber"
                   label="Teléfono"
                   outlined
                   :rules="[rules.max45]"
@@ -333,7 +410,7 @@ function goBack() {
               </div>
               <div class="col-12 col-sm-auto">
                 <q-btn
-                  label="Crear Puerto"
+                  :label="submitButtonLabel"
                   type="submit"
                   color="primary"
                   :loading="loading"
