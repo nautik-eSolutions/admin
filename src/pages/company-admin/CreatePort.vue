@@ -2,20 +2,28 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { PortService } from '../../service/PortService.js'
+import { usePortStore } from 'stores/port.js'
 import { CityService } from '../../service/CityService.js'
 
 const $q = useQuasar()
 const router = useRouter()
+const portStore = usePortStore()
 
 const cityOptions = ref([])
 const loading = ref(false)
-const mapCenter = ref({ lat: 39.5, lng: 2.5 }) // Centro de España por defecto
+const mapCenter = ref({ lat: 39.5, lng: -3.5 })
 const selectedPosition = ref(null)
 const map = ref(null)
 const marker = ref(null)
 
-const form = reactive({
+const spainBounds = {
+  minLat: 27.5,
+  maxLat: 43.8,
+  minLng: -18.5,
+  maxLng: 4.5
+}
+
+const form = ref({
   name: '',
   vhfChannel: null,
   cityName: null,
@@ -35,9 +43,7 @@ const rules = {
   max100: val => !val || val.length <= 100 || 'Máximo 100 caracteres.',
   max255: val => !val || val.length <= 255 || 'Máximo 255 caracteres.',
   email: val => !val || /.+@.+\..+/.test(val) || 'Email inválido.',
-  phone: val => !val || /^[\d\s\+\-\(\)]+$/.test(val) || 'Teléfono inválido.',
-  vhfChannel: val => !val || (val >= 1 && val <= 88) || 'Canal VHF debe estar entre 1 y 88.',
-  coordinates: () => !!selectedPosition.value || 'Debe seleccionar una ubicación en el mapa.'
+  number: val => !val || !isNaN(val) || 'Debe ser un número válido.'
 }
 
 onMounted(async () => {
@@ -61,25 +67,37 @@ async function initMap() {
   if (!window.L) {
     await loadLeaflet()
   }
-
   const L = window.L
   map.value = L.map('map').setView([mapCenter.value.lat, mapCenter.value.lng], 6)
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
     maxZoom: 19
   }).addTo(map.value)
+  const bounds = L.latLngBounds(
+    L.latLng(spainBounds.minLat, spainBounds.minLng),
+    L.latLng(spainBounds.maxLat, spainBounds.maxLng)
+  )
 
-  // Click en el mapa para seleccionar ubicación
+  map.value.setMaxBounds(bounds)
   map.value.on('click', (e) => {
     const { lat, lng } = e.latlng
-
+    if (lat < spainBounds.minLat || lat > spainBounds.maxLat ||
+      lng < spainBounds.minLng || lng > spainBounds.maxLng) {
+      $q.notify({
+        type: 'warning',
+        position: 'top-right',
+        message: 'La ubicación debe estar dentro de España.',
+        timeout: 3000
+      })
+      return
+    }
     if (marker.value) {
       map.value.removeLayer(marker.value)
     }
     marker.value = L.marker([lat, lng]).addTo(map.value)
     selectedPosition.value = { lat, lng }
-    form.lat = lat
-    form.lon = lng
+    form.value.lat = lat
+    form.value.lon = lng
 
     $q.notify({
       type: 'info',
@@ -113,39 +131,26 @@ async function onSubmit() {
     })
     return
   }
-
   loading.value = true
   try {
     const payload = {
-      name: form.name,
-      vhfChannel: form.vhfChannel || null,
-      cityName: form.cityName,
-      fuelStation: form.fuelStation,
-      travelLift: form.travelLift,
-      crane: form.crane,
-      lon: form.lon,
-      lat: form.lat,
-      phone: form.phone || null,
-      email: form.email || null,
-      openingHours: form.openingHours || null
+      name: form.value.name,
+      vhfChannel: form.value.vhfChannel || null,
+      cityName: form.value.cityName,
+      fuelStation: form.value.fuelStation,
+      travelLift: form.value.travelLift,
+      crane: form.value.crane,
+      lon: form.value.lon,
+      lat: form.value.lat,
+      phoneNumber: form.value.phone || null,
+      email: form.value.email || null,
+      openingHours: form.value.openingHours || null
     }
+    console.log(payload)
+    const port  = await portStore.createPort(payload)
 
-    await PortService.add(payload)
-
-    $q.notify({
-      type: 'positive',
-      position: 'top-right',
-      message: 'Puerto creado correctamente.'
-    })
-
-    router.push('/ports')
+    await router.push('/ports/'+ port.id)
   } catch (error) {
-    const message = error.response?.data?.detail || 'Error al crear el puerto.'
-    $q.notify({
-      type: 'negative',
-      position: 'top-right',
-      message
-    })
   } finally {
     loading.value = false
   }
@@ -196,11 +201,7 @@ function goBack() {
       <q-card flat bordered>
         <q-card-section>
           <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
-            <div class="text-h6 text-primary q-mb-md">
-              <q-icon name="info" class="q-mr-sm" />
-              Información Básica
-            </div>
-
+            <div class="text-h6 text-primary q-mb-md">Información Básica</div>
             <div class="row q-col-gutter-md">
               <div class="col-12 col-md-6">
                 <q-input
@@ -208,14 +209,8 @@ function goBack() {
                   label="Nombre del Puerto *"
                   outlined
                   :rules="[rules.required, rules.max45]"
-                  hint="Nombre identificativo del puerto"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="anchor" />
-                  </template>
-                </q-input>
+                />
               </div>
-
               <div class="col-12 col-md-6">
                 <q-select
                   v-model="form.cityName"
@@ -225,43 +220,25 @@ function goBack() {
                   label="Ciudad *"
                   outlined
                   :rules="[rules.required]"
-                  hint="Ciudad donde se encuentra el puerto"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="location_city" />
-                  </template>
-                </q-select>
+                />
               </div>
-
               <div class="col-12 col-md-6">
                 <q-input
                   v-model.number="form.vhfChannel"
                   type="number"
                   label="Canal VHF"
                   outlined
-                  :rules="[rules.vhfChannel]"
-                  hint="Canal VHF de comunicación (1-88)"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="radio" />
-                  </template>
-                </q-input>
+                  :rules="[rules.number]"
+                />
               </div>
-
               <div class="col-12 col-md-6">
                 <q-input
                   v-model="form.phone"
                   label="Teléfono"
                   outlined
-                  :rules="[rules.phone, rules.max45]"
-                  hint="Número de contacto del puerto"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="phone" />
-                  </template>
-                </q-input>
+                  :rules="[rules.max45]"
+                />
               </div>
-
               <div class="col-12 col-md-6">
                 <q-input
                   v-model="form.email"
@@ -269,35 +246,19 @@ function goBack() {
                   outlined
                   type="email"
                   :rules="[rules.email, rules.max100]"
-                  hint="Correo electrónico de contacto"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="email" />
-                  </template>
-                </q-input>
+                />
               </div>
-
               <div class="col-12 col-md-6">
                 <q-input
                   v-model="form.openingHours"
                   label="Horario de Apertura"
                   outlined
                   :rules="[rules.max255]"
-                  hint="Ej: Lun-Vie 8:00-20:00"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="schedule" />
-                  </template>
-                </q-input>
+                />
               </div>
             </div>
-
             <q-separator class="q-my-lg" />
-            <div class="text-h6 text-primary q-mb-md">
-              <q-icon name="build" class="q-mr-sm" />
-              Servicios Disponibles
-            </div>
-
+            <div class="text-h6 text-primary q-mb-md">Servicios Disponibles</div>
             <div class="row q-col-gutter-md">
               <div class="col-12 col-md-4">
                 <q-checkbox
@@ -306,7 +267,6 @@ function goBack() {
                   color="primary"
                 />
               </div>
-
               <div class="col-12 col-md-4">
                 <q-checkbox
                   v-model="form.travelLift"
@@ -314,7 +274,6 @@ function goBack() {
                   color="primary"
                 />
               </div>
-
               <div class="col-12 col-md-4">
                 <q-checkbox
                   v-model="form.crane"
@@ -323,13 +282,8 @@ function goBack() {
                 />
               </div>
             </div>
-
             <q-separator class="q-my-lg" />
-            <div class="text-h6 text-primary q-mb-md">
-              <q-icon name="map" class="q-mr-sm" />
-              Ubicación del Puerto *
-            </div>
-
+            <div class="text-h6 text-primary q-mb-md">Ubicación del Puerto *</div>
             <div class="row q-col-gutter-md">
               <div class="col-12">
                 <div class="text-subtitle2 text-grey-7 q-mb-sm">
@@ -340,36 +294,23 @@ function goBack() {
                   style="height: 400px; width: 100%; border-radius: 8px; border: 1px solid #e0e0e0;"
                 ></div>
               </div>
-
               <div class="col-12 col-md-6">
                 <q-input
                   :model-value="form.lat?.toFixed(6) || ''"
                   label="Latitud"
                   outlined
                   readonly
-                  hint="Seleccione en el mapa"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="explore" />
-                  </template>
-                </q-input>
+                />
               </div>
-
               <div class="col-12 col-md-6">
                 <q-input
                   :model-value="form.lon?.toFixed(6) || ''"
                   label="Longitud"
                   outlined
                   readonly
-                  hint="Seleccione en el mapa"
-                >
-                  <template v-slot:prepend>
-                    <q-icon name="explore" />
-                  </template>
-                </q-input>
+                />
               </div>
             </div>
-
             <q-separator class="q-my-lg" />
             <div class="row q-col-gutter-sm justify-end">
               <div class="col-12 col-sm-auto">
@@ -404,7 +345,6 @@ function goBack() {
                 </q-btn>
               </div>
             </div>
-
           </q-form>
         </q-card-section>
       </q-card>
@@ -416,7 +356,6 @@ function goBack() {
 #map {
   z-index: 0;
 }
-
 .leaflet-container {
   font-family: 'Roboto', sans-serif;
 }

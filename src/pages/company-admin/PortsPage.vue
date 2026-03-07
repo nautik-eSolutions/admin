@@ -28,7 +28,7 @@ function goToPort(id) {
 }
 
 function goToAddPort() {
-  router.push('/ports/add')
+  router.push('/ports/create')
 }
 
 function confirmDelete(port) {
