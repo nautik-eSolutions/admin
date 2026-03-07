@@ -33,7 +33,10 @@ const numberRules = [
 onMounted(async () => {
   await mooringCategoryStore.getMooringCategory(route.params.id)
   await mooringStore.getMooringsByCategory(route.params.id)
-  await priceConfigStore.getAllPriceConfigurations(PORT_ID)
+  await priceConfigStore.getAllPriceConfigurations()
+
+
+  console.log(mooringCategoryStore.category)
 })
 
 const mooringsColumns = [
@@ -125,7 +128,7 @@ async function unassignPriceConfig(priceConfig) {
         route.params.id,
         priceConfig.id
       )
-      await mooringCategoryStore.getMooringCategory(PORT_ID, route.params.id)
+      await mooringCategoryStore.getMooringCategory(route.params.id)
       $q.notify({
         type: 'positive',
         message: 'Configuración desvinculada',

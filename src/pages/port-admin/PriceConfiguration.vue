@@ -28,7 +28,7 @@ const form = ref({
 
 
 onMounted(async () => {
-  await priceConfigurationStore.getAllPriceConfigurations(PORT_ID)
+  await priceConfigurationStore.getAllPriceConfigurations()
 })
 
 function parseDate(d) {
@@ -100,9 +100,9 @@ async function onSubmit() {
     minPricePerDay: form.value.minPricePerDay,
   }
   if (editingId.value !== null) {
-    await priceConfigurationStore.updatePriceConfiguration(PORT_ID, editingId.value, payload)
+    await priceConfigurationStore.updatePriceConfiguration( editingId.value, payload)
   } else {
-    await priceConfigurationStore.createPriceConfiguration(PORT_ID, payload)
+    await priceConfigurationStore.createPriceConfiguration( payload)
   }
 
   showForm.value = false

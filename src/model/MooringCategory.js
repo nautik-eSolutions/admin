@@ -14,6 +14,7 @@ export class MooringCategory {
       id: json.id,
       minPricePerDay: json.minPricePerDay,
       zoneId: json.zoneId,
+      priceConfigurations:json.priceConfigurations,
       name:json.name
     })
   }

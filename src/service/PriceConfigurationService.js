@@ -1,15 +1,15 @@
 import {api} from "boot/axios.js";
 
 export async function getAllPriceConfigurations() {
-  return await api.get(`price-configurations/`)
+  return await api.get(`price-configurations`)
 }
 
 export async function getPriceConfiguration( id) {
   return await api.get(`price-configurations/${id}`)
 }
 
-export async function createPriceConfiguration( payload) {
-  return await api.post(`price-configurations/`, payload)
+export async function createPriceConfiguration(payload) {
+  return await api.post(`price-configurations`, payload)
 }
 
 export async function updatePriceConfiguration( id, payload) {

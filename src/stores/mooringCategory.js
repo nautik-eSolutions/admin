@@ -35,6 +35,7 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       try {
         const resp = await getMooringCategory(id)
         if (!isOk(resp)) throw new Error()
+        console.log(resp.data)
         this.category = MooringCategoryInfo.fromJson(resp.data)
       } catch (e) {
         onError(e, 'Error al obtener las categorias.')
