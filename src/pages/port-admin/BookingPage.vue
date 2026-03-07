@@ -1,3 +1,62 @@
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useBookingStore } from '../../stores/booking'
+import { date } from 'quasar'
+
+const route = useRoute()
+const router = useRouter()
+const store = useBookingStore()
+const selectedStatus = ref(null)
+
+const statusOptions = [
+  { label: 'Pending', value: 'PENDING' },
+  { label: 'Paid', value: 'PAID' },
+  { label: 'Failed', value: 'FAILED' },
+  { label: 'No Show', value: 'NO_SHOW' }
+]
+
+function formatDate(val) {
+  return val ? date.formatDate(val, 'DD/MM/YYYY') : ''
+}
+
+function formatDateTime(val) {
+  return val ? date.formatDate(val, 'DD/MM/YYYY HH:mm') : ''
+}
+
+function getStatusColor(status) {
+  const colors = {
+    PENDING: 'orange',
+    PAID: 'green',
+    FAILED: 'red',
+    CANCELLED: 'grey',
+    NO_SHOW: 'purple'
+  }
+  return colors[status] || 'primary'
+}
+
+function goBack() {
+  router.push('/bookings')
+}
+
+async function onStatusChange(newStatus) {
+  if (!newStatus) return
+  await store.updateBookingStatus(store.Booking.id, newStatus.value)
+  selectedStatus.value = null
+}
+
+async function onCancel() {
+  await store.cancelBooking(store.Booking.id)
+  goBack()
+}
+
+onMounted(async () => {
+  const id = Number(route.params.id)
+  await store.getBookingById(id)
+  console.log(store.Booking)
+})
+</script>
+
 <template>
   <q-page padding>
     <q-breadcrumbs class="q-mb-md">
@@ -67,7 +126,7 @@
                 <q-item-section>
                   <q-item-label caption>Status</q-item-label>
                   <q-item-label>
-                    <q-badge :color="getStatusColor(store.Booking.status)">{{ store.Booking.status }}</q-badge>
+                    <q-badge :color="getStatusColor(store.Booking.bookingStatus)">{{ store.Booking.bookingStatus }}</q-badge>
                   </q-item-label>
                 </q-item-section>
               </q-item>
@@ -129,64 +188,7 @@
       </q-card-section>
     </q-card>
 
-    <!-- No inner loading -->
   </q-page>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useBookingStore } from '../stores/booking'
-import { date } from 'quasar'
 
-const route = useRoute()
-const router = useRouter()
-const store = useBookingStore()
-const selectedStatus = ref(null)
-
-const statusOptions = [
-  { label: 'Pending', value: 'PENDING' },
-  { label: 'Paid', value: 'PAID' },
-  { label: 'Failed', value: 'FAILED' },
-  { label: 'No Show', value: 'NO_SHOW' }
-]
-
-function formatDate(val) {
-  return val ? date.formatDate(val, 'DD/MM/YYYY') : ''
-}
-
-function formatDateTime(val) {
-  return val ? date.formatDate(val, 'DD/MM/YYYY HH:mm') : ''
-}
-
-function getStatusColor(status) {
-  const colors = {
-    PENDING: 'orange',
-    PAID: 'green',
-    FAILED: 'red',
-    CANCELLED: 'grey',
-    NO_SHOW: 'purple'
-  }
-  return colors[status] || 'primary'
-}
-
-function goBack() {
-  router.push('/bookings')
-}
-
-async function onStatusChange(newStatus) {
-  if (!newStatus) return
-  await store.updateBookingStatus(store.Booking.id, newStatus.value)
-  selectedStatus.value = null
-}
-
-async function onCancel() {
-  await store.cancelBooking(store.Booking.id)
-  goBack()
-}
-
-onMounted(async () => {
-  const id = Number(route.params.id)
-  await store.getBookingById(id)
-})
-</script>

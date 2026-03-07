@@ -14,12 +14,14 @@ export const useBookingStore = defineStore('bookingStore', {
       const $q = useQuasar()
       try {
         const resp = await getBookings(params)
+
         if (resp.status !== 200) {
           console.log("Recuerda poner algo ingeniero bookingStore 15")
           $q.notify({ type: 'negative', message: 'Error loading bookings' })
           return []
         }
         this.Bookings = resp.data.content.map(booking => this.fromJson(booking))
+        console.log(this.Bookings)
         return this.Bookings
       } catch (error) {
         console.error(error)
@@ -95,7 +97,11 @@ export const useBookingStore = defineStore('bookingStore', {
         json.startDate,
         json.endDate,
         json.boatId,
-        json.status,
+        json.boatName,
+        json.boatRegistryNumber,
+        json.clientName,
+        json.clientEmail,
+        json.bookingStatus,
         json.mooring?.number,
         json.mooring?.id
       )

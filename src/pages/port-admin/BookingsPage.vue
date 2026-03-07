@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useBookingStore } from '../stores/booking.js'
+import { useBookingStore } from '../../stores/booking.js'
 import { date } from 'quasar'
 
 const router = useRouter()
@@ -13,7 +13,7 @@ const columns = [
   { name: 'boat', label: 'Boat', field: row => `${row.boatName} (${row.boatRegistryNumber})`, align: 'left', sortable: false },
   { name: 'startDate', label: 'Start', field: 'startDate', align: 'left', sortable: true, format: val => date.formatDate(val, 'DD/MM/YYYY') },
   { name: 'endDate', label: 'End', field: 'endDate', align: 'left', sortable: true, format: val => date.formatDate(val, 'DD/MM/YYYY') },
-  { name: 'status', label: 'Status', field: 'status', align: 'left', sortable: true },
+  { name: 'status', label: 'Status', field: 'bookingStatus', align: 'left', sortable: true },
   { name: 'actions', label: 'Actions', field: 'actions', align: 'center', sortable: false }
 ]
 
@@ -36,6 +36,7 @@ function onRequest(props) {
     sort: sortBy ? (descending ? `-${sortBy}` : sortBy) : undefined
   }
   store.getAllBookings(params)
+
 }
 
 function goToDetail(id) {
@@ -44,8 +45,10 @@ function goToDetail(id) {
 
 onMounted(() => {
   store.getAllBookings({ page: 0, size: 10, sort: '-startDate' })
+  console.log(store.Bookings)
 })
 </script>
+
 <template>
   <q-page padding>
     <div class="row items-center q-mb-md">
@@ -87,5 +90,8 @@ onMounted(() => {
     </q-table>
   </q-page>
 </template>
+
+
+
 
 

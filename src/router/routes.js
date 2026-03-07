@@ -16,21 +16,29 @@ const routes = [
     path: '/boats',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/BoatList.vue') }
+      { path: '', component: () => import('pages/developer/BoatList.vue') }
     ],
     meta: {requiresAuth: true}
-  },  {
+  },
+  {
+    path: '/ports/create',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      {path: '', component: () => import('pages/company-admin/CreatePort.vue')}
+    ]
+  },
+  {
     path: '/ports-dev',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PortsList.vue') }
+      { path: '', component: () => import('pages/developer/PortsList.vue') }
     ],
     meta: {requiresAuth: true}
   },{
     path: `/ports-dev/:portId`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PortInfo.vue') }
+      { path: '', component: () => import('pages/developer/PortInfo.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -38,7 +46,7 @@ const routes = [
     path: `/administrator-management`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PortAdminsPage.vue') }
+      { path: '', component: () => import('pages/company-admin/PortAdminsPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -46,7 +54,7 @@ const routes = [
     path: `/zones`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/ZonesPage.vue') }
+      { path: '', component: () => import('pages/port-admin/ZonesPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -54,7 +62,7 @@ const routes = [
     path: `/zones/:id`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/ZonePage.vue') }
+      { path: '', component: () => import('pages/port-admin/ZonePage.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -62,7 +70,7 @@ const routes = [
     path: `/moorings/:id`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/MooringEditPage.vue') }
+      { path: '', component: () => import('pages/port-admin/MooringEditPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -70,7 +78,7 @@ const routes = [
     path: `/dimensions`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/DimensionsPage.vue') }
+      { path: '', component: () => import('pages/port-admin/DimensionsPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -78,7 +86,7 @@ const routes = [
     path: `/price-configurations`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PriceConfiguration.vue') }
+      { path: '', component: () => import('pages/port-admin/PriceConfiguration.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -86,7 +94,7 @@ const routes = [
     path: `/mooring-categories`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/MooringCategories.vue') }
+      { path: '', component: () => import('pages/port-admin/MooringCategories.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -94,15 +102,15 @@ const routes = [
     path: `/mooring-categories/:id`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/MooringCategoryPage.vue') }
+      { path: '', component: () => import('pages/port-admin/MooringCategoryPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
   {
-    path: `/ports`,
+    path: `/ports-company`,
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PortsPage.vue') }
+      { path: '', component: () => import('pages/company-admin/PortsPage.vue') }
     ],
     meta: {requiresAuth: true}
   },
@@ -118,7 +126,7 @@ const routes = [
     path: '/occupancy',
     component: () => import('layouts/MainLayout.vue'),
     children : [
-      { path: '', component: () => import('pages/OccupancySearchPage.vue') }
+      { path: '', component: () => import('pages/port-admin/OccupancySearchPage.vue') }
     ]
   },
 
@@ -127,35 +135,35 @@ const routes = [
     name: 'occupancy',
     component: () => import('layouts/MainLayout.vue'),
     children : [
-      { path: '', component: () => import('pages/OccupancyDisplay.vue') }
+      { path: '', component: () => import('pages/port-admin/OccupancyDisplay.vue') }
     ]
   },
   {
     path: '/checkin',
     component: () => import('layouts/MainLayout.vue'),
     children : [
-      { path: '', component: () => import('pages/CheckInPage.vue') }
+      { path: '', component: () => import('pages/port-admin/CheckInPage.vue') }
     ]
   },
   {
     path: '/checkout',
     component: () => import('layouts/MainLayout.vue'),
     children : [
-      { path: '', component: () => import('pages/CheckOutPage.vue') }
+      { path: '', component: () => import('pages/port-admin/CheckOutPage.vue') }
     ]
   },
   {
     path: '/bookings',
     component: () => import('layouts/MainLayout.vue'),
     children : [
-      { path: '', component: () => import('pages/BookingsPage.vue') }
+      { path: '', component: () => import('pages/port-admin/BookingsPage.vue') }
     ]
   },
   {
     path: '/bookings/:id',
     component: () => import('layouts/MainLayout.vue'),
     children : [
-      { path: '', component: () => import('pages/BookingPage.vue') }
+      { path: '', component: () => import('pages/port-admin/BookingPage.vue') }
     ]
   }
   ,

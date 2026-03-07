@@ -3,8 +3,8 @@ import { onMounted, ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { useQuasar } from 'quasar';
 import { ZoneService } from "src/service/ZoneService.js";
-import { useServiceStore } from '../stores/services.js';
-import { useZoneServiceStore } from '../stores/zoneService.js';
+import { useServiceStore } from '../../stores/services.js';
+import { useZoneServiceStore } from '../../stores/zoneService.js';
 
 const $q = useQuasar();
 const route = useRoute();

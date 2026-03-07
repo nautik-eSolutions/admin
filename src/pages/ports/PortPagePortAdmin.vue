@@ -28,7 +28,6 @@ const mockFields = ref({
   phone: '+34 971 000 000',
   email: 'info@puerto.es',
   openingHours: '08:00 - 20:00',
-  emergencyPhone: '112',
 })
 
 const editingMock = ref(false)

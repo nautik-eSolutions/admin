@@ -154,7 +154,35 @@ const AdminCompanyLinkList = ref([
   {
     title: 'Ports',
     icon: '',
-    link: '/bookings/edit'
+    link: '/ports-company'
+  },
+  {
+    title: 'Estadísticas',
+    icon: '',
+    link: '/statistics'
+  }
+])
+
+const DeveloperLinkList = ref([
+  {
+    title: 'Usuarios',
+    icon: '',
+    link: '/users'
+  },
+  {
+    title: 'Administrar compañias',
+    icon: '',
+    link: '/create-company'
+  },
+  {
+    title: 'Administrar usuarios de admin',
+    icon: '',
+    link: '/admin-users'
+  },
+  {
+    title: 'Pagos',
+    icon: '',
+    link: '/payments'
   }
 ])
 
@@ -167,6 +195,8 @@ function getLinksList() {
   } else if (auth.role === 'ADMIN_PORT') {
     return PortAdminLinkList;
 
+  } else if (auth.role === 'DEVELOPER') {
+    return DeveloperLinkList;
   }
 }
 

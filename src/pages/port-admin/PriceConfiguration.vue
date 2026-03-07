@@ -1,7 +1,7 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
 import {useQuasar} from 'quasar'
-import {usePriceConfigurationStore} from '../stores/priceConfiguration.js'
+import {usePriceConfigurationStore} from '../../stores/priceConfiguration.js'
 import {usePortStore} from "stores/port.js";
 const portStore = usePortStore()
 
@@ -161,7 +161,6 @@ function findIndex(row) {
       </q-table>
     </q-card>
 
-    <!-- Dialog -->
     <q-dialog v-model="showForm" persistent>
       <q-card style="width: 520px; max-width: 95vw;">
         <q-card-section class="flex items-center justify-between pb-2">

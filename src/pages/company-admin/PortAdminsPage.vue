@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue'
 import { useAdminPort } from 'stores/adminPort'
-import AdminPortDialog from '../components/AdminPortDialog.vue'
+import AdminPortDialog from '../../components/AdminPortDialog.vue'
 
 const portStore = useAdminPort()
 const dialog = ref(false)

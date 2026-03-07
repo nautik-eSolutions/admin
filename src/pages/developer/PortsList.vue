@@ -149,7 +149,7 @@ onMounted(async () => {
 })
 
 
-const goToPort = (evt, row) => {
+const goToPort = ( row) => {
   router.push(`/ports/${row.id}`)
 }
 </script>
