@@ -38,7 +38,7 @@ const mockSnapshot = ref({})
 onMounted(async () => {
 
   const [portData, imagesData] = await Promise.all([
-     authStore.role === 'ADMIN_PORT' ? PortService.getPortByPortAdmin() : PortService.getOne(route.params.id),
+     authStore.role === 'ADMIN_PORT' ? PortService.getPortByPortAdmin() : PortService.getById(route.params.id),
      authStore.role ==='ADMIN_PORT'?
        getPortImagesPortAdmin().then(r => r.data).catch(() => []):
        getPortImages(route.params.id).then(r => r.data).catch(() => [])

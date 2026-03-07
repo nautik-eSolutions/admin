@@ -24,9 +24,9 @@ export const usePortStore = defineStore('port', {
       this.portId = null
       this.port = null
     },
-    async getAllPorts() {
+    async getAllPortByCompanyAdmin() {
       try {
-        const resp = await PortService.getAll()
+        const resp = await PortService.getAllByCompanyAdmin()
         if (!isOk(resp)) throw new Error()
         this.ports = resp.data.map(Port.fromJson)
         Notify.create({ type: 'positive', message: 'Puertos cargados correctamente' })

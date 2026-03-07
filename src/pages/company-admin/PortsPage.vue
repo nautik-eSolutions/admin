@@ -3,10 +3,11 @@ import {onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {useQuasar} from 'quasar'
 import {PortService} from '../../service/PortService.js'
+import {usePortStore} from "stores/port.js";
 
 const $q = useQuasar()
 const router = useRouter()
-
+const portStore = usePortStore();
 const ports = ref([])
 const loading = ref(false)
 
@@ -19,7 +20,7 @@ const columns = [
 
 onMounted(async () => {
   loading.value = true
-  ports.value = await PortService.getAllByCompanyAdmin()
+  ports.value = await portStore.getAllPortByCompanyAdmin()
   loading.value = false
 })
 
@@ -78,6 +79,7 @@ function confirmDelete(port) {
 
       <template #body-cell-actions="{ row }">
         <q-td class="text-right">
+          <q-btn flat round dense icon="visibility" color="primary" @click="goToPort(row.id)" class="q-mr-sm" />
           <q-btn flat round dense icon="delete" color="negative" @click="confirmDelete(row)" />
         </q-td>
       </template>
