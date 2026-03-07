@@ -106,7 +106,7 @@ async function assignPriceConfig() {
       route.params.id,
       selectedPriceConfig.value.id
   )
-  await mooringCategoryStore.getMooringCategory(PORT_ID, route.params.id)
+  await mooringCategoryStore.getMooringCategory(route.params.id)
     assignDialogOpen.value = false
     $q.notify({
       type: 'positive',
