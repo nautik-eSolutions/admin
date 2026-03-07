@@ -1,5 +1,11 @@
 import { defineStore } from 'pinia'
-import { getBookings, getBookingById, patchBookingStatus, deleteBooking } from 'src/service/BookingService.js'
+import {
+  getBookings,
+  getBookingById,
+  patchBookingStatus,
+  deleteBooking,
+  getBookingsByMooringId
+} from 'src/service/BookingService.js'
 import { useQuasar } from 'quasar'
 import { Booking } from 'src/model/Booking.js'
 
@@ -16,7 +22,6 @@ export const useBookingStore = defineStore('bookingStore', {
         const resp = await getBookings(params)
 
         if (resp.status !== 200) {
-          console.log("Recuerda poner algo ingeniero bookingStore 15")
           $q.notify({ type: 'negative', message: 'Error loading bookings' })
           return []
         }
@@ -35,12 +40,28 @@ export const useBookingStore = defineStore('bookingStore', {
       try {
         const resp = await getBookingById(id)
         if (resp.status !== 200) {
-          console.log("Recuerda poner algo ingeniero bookingStore 15")
+          console.log("Recuerda poner algo outgeniero bookingStore 15")
           $q.notify({ type: 'negative', message: 'Error loading booking' })
           return null
         }
         this.Booking = this.fromJson(resp.data)
         return this.Booking
+      } catch (error) {
+        console.error(error)
+        $q.notify({ type: 'negative', message: error.response?.data?.detail || 'Error loading booking' })
+        return null
+      }
+    },
+    async getBookingsByMooring(id) {
+      const $q = useQuasar()
+      try {
+        const resp = await getBookingsByMooringId(id)
+        if (resp.status !== 200) {
+          $q.notify({ type: 'negative', message: 'Error loading bookings' })
+          return null
+        }
+        this.Bookings = resp.data.map(json=>this.fromJson(json))
+        return this.Bookings
       } catch (error) {
         console.error(error)
         $q.notify({ type: 'negative', message: error.response?.data?.detail || 'Error loading booking' })
@@ -53,7 +74,6 @@ export const useBookingStore = defineStore('bookingStore', {
       try {
         const resp = await patchBookingStatus(id, status)
         if (resp.status !== 200) {
-          console.log("Recuerda poner algo ingeniero bookingStore 15")
           $q.notify({ type: 'negative', message: 'Error updating status' })
           return null
         }

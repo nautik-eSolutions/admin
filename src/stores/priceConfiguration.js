@@ -24,9 +24,9 @@ export const usePriceConfigurationStore = defineStore('priceConfiguration', {
 
   actions: {
 
-    async getAllPriceConfigurations(portId) {
+    async getAllPriceConfigurations() {
       try {
-        const resp = await getAllPriceConfigurations(portId)
+        const resp = await getAllPriceConfigurations()
 
         if (!isOk(resp)) throw new Error()
         this.priceConfigurations = resp.data.map(PriceConfiguration.fromJson)

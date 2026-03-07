@@ -5,6 +5,7 @@ import {
   getMooringCategories, getMooringCategory, createMooringCategory, updateMooringCategory, deleteMooringCategory,
 } from '../service/MooringCategoryService.js'
 import {MooringCategoryInfo} from '../model/MooringCategoryInfo.js'
+import {api} from "boot/axios.js";
 
 const isOk = (resp) => resp?.status >= 200 && resp?.status < 300
 
@@ -18,9 +19,10 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
   }),
 
   actions: {
-    async getMooringCategories(PortId) {
+    async getMooringCategories() {
       try {
-        const resp = await getMooringCategories(PortId)
+        const resp = await getMooringCategories()
+
         if (!isOk(resp)) throw new Error()
         this.categories = resp.data.map(MooringCategory.fromJson)
         return this.categories
@@ -29,9 +31,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async getMooringCategory(portId,id) {
+    async getMooringCategory(id) {
       try {
-        const resp = await getMooringCategory(portId,id)
+        const resp = await getMooringCategory(id)
         if (!isOk(resp)) throw new Error()
         this.category = MooringCategoryInfo.fromJson(resp.data)
       } catch (e) {
@@ -39,9 +41,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async createMooringCategory(portId,payload) {
+    async createMooringCategory(payload) {
       try {
-        const resp = await createMooringCategory(portId,payload)
+        const resp = await createMooringCategory(payload)
         if (!isOk(resp)) throw new Error()
         this.categories.push(MooringCategory.fromJson(resp.data))
         Notify.create({type: 'positive', position: 'top-right', message: 'Categoría creada correctamente.'})
@@ -50,9 +52,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async updateMooringCategory(portId,id, payload) {
+    async updateMooringCategory(id, payload) {
       try {
-        const resp = await updateMooringCategory(portId,id, payload)
+        const resp = await updateMooringCategory(id, payload)
         if (!isOk(resp)) throw new Error()
         const updated = MooringCategory.fromJson(resp.data)
         const index = this.categories.findIndex((c) => String(c.id) === String(id))
@@ -64,9 +66,9 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
       }
     },
 
-    async deleteMooringCategory(portId,id) {
+    async deleteMooringCategory(id) {
       try {
-        const resp = await deleteMooringCategory(portId,id)
+        const resp = await deleteMooringCategory(id)
         if (!isOk(resp)) throw new Error()
         this.categories = this.categories.filter((c) => String(c.id) !== String(id))
         Notify.create({type: 'positive', position: 'top-right', message: 'Categoría eliminada correctamente.'})
@@ -74,5 +76,35 @@ export const useMooringCategoryStore = defineStore('mooringCategory', {
         onError(e, 'Error al eliminar la categoria.')
       }
     },
+    async assignPriceConfiguration(categoryId, priceConfigId) {
+      try {
+        const resp = await api.post(`/mooring-categories/${categoryId}/price-configurations/${priceConfigId}`)
+        console.log(resp)
+        if (!isOk(resp)) throw new Error()
+        return resp.data
+      } catch (e) {
+        $q.notify({
+          type: 'negative',
+          message: error?.response?.data?.message || 'Error al asignar la configuración',
+          position: 'bottom-right',
+        })
+        throw e
+      }
+    },
+
+    async unassignPriceConfiguration( categoryId, priceConfigId) {
+      try {
+        const resp = await api.delete(`/mooring-categories/${categoryId}/price-configurations/${priceConfigId}`)
+        if (!isOk(resp)) throw new Error()
+        return resp.data
+      } catch (e) {
+        $q.notify({
+          type: 'negative',
+          message: error?.response?.data?.message || 'Error al asignar la configuración',
+          position: 'bottom-right',
+        })
+        throw e
+      }
+    }
   },
 })
