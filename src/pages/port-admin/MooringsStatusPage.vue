@@ -14,9 +14,9 @@ const showAllIncidents = ref(false)
 
 const columns = [
   {
-    name: 'mooringCode',
+    name: 'mooringNumber',
     label: 'Amarre',
-    field: 'mooringCode',
+    field: 'mooringNumber',
     align: 'left',
     sortable: true
   },
@@ -66,6 +66,7 @@ async function loadIncidents() {
   try {
     if (showAllIncidents.value) {
       incidents.value = await incidentStore.fetchAllIncidents()
+      console.log(incidents)
     } else {
       incidents.value = await incidentStore.fetchCurrentIncidents()
     }
@@ -223,7 +224,7 @@ function refreshIncidents() {
                 dense
                 icon="edit"
                 color="primary"
-                @click="router.push(`/incidents/${row.id}/edit`)"
+                @click="router.push(`incidents/edit/${row.id}`)"
               >
                 <q-tooltip>Editar</q-tooltip>
               </q-btn>

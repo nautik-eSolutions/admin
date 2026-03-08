@@ -42,11 +42,6 @@ const rules = {
   }
 }
 
-const selectedMooring = computed(() => {
-  if (!form.value.mooringId) return null
-  return moorings.value.find(m => m.id === form.value.mooringId)
-})
-
 const incidentId = computed(() => route.params.id)
 
 onMounted(async () => {
@@ -60,14 +55,11 @@ async function loadMoorings() {
     const response = await getMoorings(portId)
     moorings.value = response.data || []
 
+    // Mapeo simplificado: solo mostramos el número
     mooringOptions.value = moorings.value.map(m => ({
-      label: `${m.code} - ${m.categoryName || 'Sin categoría'} ${m.zoneName ? `(${m.zoneName})` : ''}`,
+      label: m.number,
       value: m.id,
-      code: m.code,
-      category: m.categoryName,
-      zone: m.zoneName,
-      length: m.length,
-      width: m.width
+      number: m.number
     }))
   } catch (error) {
     $q.notify({
@@ -92,7 +84,7 @@ async function loadIncident() {
         position: 'top-right',
         message: 'Incidente no encontrado.'
       })
-      router.push('/incidents')
+      router.push('moorings/incidents')
       return
     }
 
@@ -109,7 +101,7 @@ async function loadIncident() {
       position: 'top-right',
       message: 'Error al cargar el incidente.'
     })
-    router.push('/incidents')
+    router.push('/moorings/incidents')
   } finally {
     loadingIncident.value = false
   }
@@ -127,46 +119,10 @@ function formatDateForInput(dateString) {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 }
 
-function filterMoorings(val, update) {
-  if (val === '') {
-    update(() => {
-      mooringOptions.value = moorings.value.map(m => ({
-        label: `${m.code} - ${m.categoryName || 'Sin categoría'} ${m.zoneName ? `(${m.zoneName})` : ''}`,
-        value: m.id,
-        code: m.code,
-        category: m.categoryName,
-        zone: m.zoneName,
-        length: m.length,
-        width: m.width
-      }))
-    })
-    return
-  }
-
-  update(() => {
-    const needle = val.toLowerCase()
-    mooringOptions.value = moorings.value
-      .filter(m => {
-        const searchText = `${m.code} ${m.categoryName || ''} ${m.zoneName || ''}`.toLowerCase()
-        return searchText.includes(needle)
-      })
-      .map(m => ({
-        label: `${m.code} - ${m.categoryName || 'Sin categoría'} ${m.zoneName ? `(${m.zoneName})` : ''}`,
-        value: m.id,
-        code: m.code,
-        category: m.categoryName,
-        zone: m.zoneName,
-        length: m.length,
-        width: m.width
-      }))
-  })
-}
-
 async function onSubmit() {
   loading.value = true
   try {
     const payload = {
-      mooringId: form.value.mooringId,
       description: form.value.description,
       startDate: form.value.startDate ? new Date(form.value.startDate).toISOString() : null,
       endDate: form.value.endDate ? new Date(form.value.endDate).toISOString() : null,
@@ -181,7 +137,7 @@ async function onSubmit() {
       message: 'Incidente actualizado correctamente.'
     })
 
-    router.push('/incidents')
+    router.push('/moorings/incidents')
   } catch (error) {
     const message = error.response?.data?.detail || 'Error al actualizar el incidente.'
     $q.notify({
@@ -241,37 +197,15 @@ function goBack() {
                   map-options
                   label="Amarre *"
                   outlined
-                  use-input
-                  input-debounce="300"
+                  disable
                   :loading="loadingMoorings"
                   :rules="[rules.required]"
-                  @filter="filterMoorings"
-                  hint="Busque por código, categoría o zona"
                 >
-                  <template v-slot:prepend>
-                    <q-icon name="search" />
-                  </template>
-
-                  <template v-slot:no-option>
-                    <q-item>
-                      <q-item-section class="text-grey">
-                        No se encontraron amarres
-                      </q-item-section>
-                    </q-item>
-                  </template>
-
                   <template v-slot:option="scope">
                     <q-item v-bind="scope.itemProps">
                       <q-item-section>
                         <q-item-label>
-                          <strong>{{ scope.opt.code }}</strong>
-                        </q-item-label>
-                        <q-item-label caption>
-                          {{ scope.opt.category || 'Sin categoría' }}
-                          <span v-if="scope.opt.zone"> • {{ scope.opt.zone }}</span>
-                          <span v-if="scope.opt.length || scope.opt.width">
-                            • {{ scope.opt.length }}m x {{ scope.opt.width }}m
-                          </span>
+                          <strong>{{ scope.opt.number }}</strong>
                         </q-item-label>
                       </q-item-section>
                     </q-item>
@@ -279,45 +213,10 @@ function goBack() {
 
                   <template v-slot:selected-item="scope">
                     <div class="row items-center full-width">
-                      <div>
-                        <strong>{{ scope.opt.code }}</strong>
-                        <span class="text-grey-7 q-ml-sm">
-                          - {{ scope.opt.category || 'Sin categoría' }}
-                        </span>
-                      </div>
+                      <strong>{{ scope.opt.number }}</strong>
                     </div>
                   </template>
                 </q-select>
-              </div>
-
-              <div v-if="selectedMooring" class="col-12">
-                <q-card flat bordered class="bg-blue-1">
-                  <q-card-section class="q-pa-sm">
-                    <div class="text-caption text-grey-7">Información del Amarre</div>
-                    <div class="row q-col-gutter-sm q-mt-xs">
-                      <div class="col-auto">
-                        <q-chip dense color="primary" text-color="white" size="sm">
-                          {{ selectedMooring.code }}
-                        </q-chip>
-                      </div>
-                      <div class="col-auto" v-if="selectedMooring.categoryName">
-                        <q-chip dense outline size="sm">
-                          {{ selectedMooring.categoryName }}
-                        </q-chip>
-                      </div>
-                      <div class="col-auto" v-if="selectedMooring.zoneName">
-                        <q-chip dense outline size="sm">
-                          {{ selectedMooring.zoneName }}
-                        </q-chip>
-                      </div>
-                      <div class="col-auto" v-if="selectedMooring.length">
-                        <q-chip dense outline size="sm">
-                          {{ selectedMooring.length }}m x {{ selectedMooring.width }}m
-                        </q-chip>
-                      </div>
-                    </div>
-                  </q-card-section>
-                </q-card>
               </div>
 
               <div class="col-12 col-md-6">

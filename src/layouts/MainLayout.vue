@@ -97,11 +97,6 @@ const PortAdminLinkList = ref([
     link: '/occupancy'
   },
   {
-    title: 'Estado amarres',
-    icon: '',
-    link: '/states/moorings'
-  },
-  {
     title: 'Modificar reservas',
     icon: '',
     link: '/bookings/edit'
