@@ -172,7 +172,7 @@ function refreshIncidents() {
             color="primary"
             icon="add"
             label="Nuevo Incidente"
-            @click="router.push('incidents/create')"
+            @click="router.push('/incidents/create')"
           />
         </div>
       </div>

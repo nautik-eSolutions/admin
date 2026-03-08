@@ -82,6 +82,46 @@ const routes = [
     meta: {requiresAuth: true}
   },
   {
+    path: `/moorings/incidents`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/port-admin/MooringsStatusPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/moorings/incidents/create`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/port-admin/MooringIncidentCreatePage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/moorings/incidents/edit`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/port-admin/MooringIncidentEditPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/moorings/incidents/create`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/port-admin/MooringIncidentCreatePage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
+    path: `/moorings/incidents/:id`,
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: '', component: () => import('pages/port-admin/MooringIncidentPage.vue') }
+    ],
+    meta: {requiresAuth: true}
+  },
+  {
     path: `/dimensions`,
     component: () => import('layouts/MainLayout.vue'),
     children: [

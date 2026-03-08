@@ -107,6 +107,11 @@ const PortAdminLinkList = ref([
     link: '/bookings/edit'
   },
   {
+    title: 'Gestión de incidencias en amarres',
+    icon: '',
+    link: '/moorings/incidents'
+  },
+  {
     title: 'Gestión de puerto',
     icon: '',
     link: '/ports'
