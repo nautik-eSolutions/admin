@@ -27,12 +27,20 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE)
   })
   Router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore()
+    const isAuthenticated = authStore.isAuthenticated
+    const userRole = authStore.role
 
-    if (to.matched.some(record => record.meta.requiresAuth && !useAuthStore().isAuthenticated)) {
-      next({ name: 'login', query: { next: to.fullPath } })
-    } else {
-      next()
+    if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
+      return next({ name: 'login', query: { next: to.fullPath } })
     }
+
+    if (to.meta.allowedRoles && isAuthenticated) {
+      if (!to.meta.allowedRoles.includes(userRole)) {
+        return next({ name: 'unauthorized', query: { next: to.fullPath } })
+      }
+    }
+    next()
   })
 
 
