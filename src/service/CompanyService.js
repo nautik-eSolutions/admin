@@ -6,13 +6,24 @@ export class CompanyService {
 
   static async getAll() {
     try {
-      const companies = await api.get(`companies`);
-      console.log(companies)
-      return companies.data.map(item => Company.fromJson(item));
+      const response = await api.get('companies')
+      return response.data
     } catch (error) {
-      console.error("Error:", error);
-      return [];
+      console.error('Error fetching companies:', error)
+      return []
     }
+  }
+  static async create(companyDto, username, password) {
+    const response = await api.post(
+      `companies/administrators/${encodeURIComponent(username)}/${encodeURIComponent(password)}`,
+      companyDto
+    )
+    return response.data
+  }
+
+  static async delete(companyId) {
+    const response = await api.delete(`companies/${companyId}`)
+    return response
   }
 
 }
