@@ -38,7 +38,9 @@ async function fetchCategories() {
   const portId = useAuthStore().portId;
   mooringCategories.value = await mooringCategoryStore.getMooringCategories(portId)
 }
-
+function onSearchAll() {
+  router.push({ path: `/occupancy/port` })
+}
 function onSubmit() {
   loading.value = true
 
@@ -106,7 +108,6 @@ onMounted(() => {
                   val => isValidEndDate(val) || 'Debe ser posterior a la fecha de entrada'
                 ]"
               />
-
               <div class="row q-mt-md">
                 <q-btn
                   label="Buscar Disponibilidad"

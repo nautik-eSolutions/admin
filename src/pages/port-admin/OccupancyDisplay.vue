@@ -117,20 +117,6 @@ onMounted(() => {
         />
       </template>
 
-      <div v-else-if="occupancyStore.error" class="row justify-center q-pa-md">
-        <q-card class="col-12 col-md-6">
-          <q-card-section>
-            <div class="text-h6 text-negative">Error</div>
-            <p>{{ occupancyStore.error }}</p>
-            <q-btn
-              label="Volver a buscar"
-              color="primary"
-              @click="goToSearch"
-            />
-          </q-card-section>
-        </q-card>
-      </div>
-
       <div v-else class="row justify-center q-pa-xl">
         <q-spinner color="primary" size="3em" />
       </div>

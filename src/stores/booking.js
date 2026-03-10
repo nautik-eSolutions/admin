@@ -88,26 +88,7 @@ export const useBookingStore = defineStore('bookingStore', {
         $q.notify({ type: 'negative', message: error.response?.data?.detail || 'Error updating status' })
         return null
       }
-    },
 
-    async cancelBooking(id) {
-      const $q = useQuasar()
-      try {
-        const resp = await deleteBooking(id)
-        if (resp.status !== 204) {
-          console.log("Recuerda poner algo ingeniero bookingStore 15")
-          $q.notify({ type: 'negative', message: 'Error cancelling booking' })
-          return false
-        }
-        this.Bookings = this.Bookings.filter(b => b.id !== id)
-        if (this.Booking && this.Booking.id === id) this.Booking = null
-        $q.notify({ type: 'positive', message: 'Booking cancelled' })
-        return true
-      } catch (error) {
-        console.error(error)
-        $q.notify({ type: 'negative', message: error.response?.data?.detail || 'Error cancelling booking' })
-        return false
-      }
     },
 
     fromJson(json) {

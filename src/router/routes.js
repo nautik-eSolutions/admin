@@ -27,6 +27,14 @@ const routes = [
         }
 
       },
+      {
+        path: '/occupancy/port', component: () => import('pages/port-admin/OccupancyDisplayPort.vue'),
+        meta: {
+          requiresAuth: true,
+          allowedRoles: ['ADMIN_PORT', 'ADMIN_COMPANY']
+        }
+
+      },
 
       {
         path: '/ports/:id/edit', component: () => import('pages/company-admin/CreatePort.vue'),
