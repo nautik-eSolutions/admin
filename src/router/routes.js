@@ -20,6 +20,13 @@ const routes = [
         }
       },
       {
+        path: '/create-company', component: () => import('pages/port-admin/CompanyManagmentPage.vue'),
+        meta: {
+          requiresAuth: true,
+          allowedRoles: ['DEVELOPER']
+        }
+      },
+      {
         path: '/ports/create', component: () => import('pages/company-admin/CreatePort.vue'),
         meta: {
           requiresAuth: true,
