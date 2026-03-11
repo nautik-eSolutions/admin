@@ -1,7 +1,7 @@
 <script setup>
 import {ref, computed, onMounted} from 'vue'
 import {useQuasar} from 'quasar'
-import {usePriceConfigurationStore} from '../stores/priceConfiguration.js'
+import {usePriceConfigurationStore} from 'stores/priceConfiguration.js'
 import {usePortStore} from "stores/port.js";
 const portStore = usePortStore()
 
@@ -28,7 +28,7 @@ const form = ref({
 
 
 onMounted(async () => {
-  await priceConfigurationStore.getAllPriceConfigurations(PORT_ID)
+  await priceConfigurationStore.getAllPriceConfigurations()
 })
 
 function parseDate(d) {
@@ -100,9 +100,9 @@ async function onSubmit() {
     minPricePerDay: form.value.minPricePerDay,
   }
   if (editingId.value !== null) {
-    await priceConfigurationStore.updatePriceConfiguration(PORT_ID, editingId.value, payload)
+    await priceConfigurationStore.updatePriceConfiguration( editingId.value, payload)
   } else {
-    await priceConfigurationStore.createPriceConfiguration(PORT_ID, payload)
+    await priceConfigurationStore.createPriceConfiguration( payload)
   }
 
   showForm.value = false
@@ -161,7 +161,6 @@ function findIndex(row) {
       </q-table>
     </q-card>
 
-    <!-- Dialog -->
     <q-dialog v-model="showForm" persistent>
       <q-card style="width: 520px; max-width: 95vw;">
         <q-card-section class="flex items-center justify-between pb-2">

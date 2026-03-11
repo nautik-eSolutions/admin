@@ -124,7 +124,7 @@ const deletePort = async (id) => {
 }
 
 const addPort = async () => {
-  await PortService.add(new PortCreate(nameAdd.value, cityAdd.value.label, companyAdd.value.label));
+  await PortService.create(new PortCreate(nameAdd.value, cityAdd.value.label, companyAdd.value.label));
   setNullRefs()
   await loadPorts();
 }
@@ -149,7 +149,7 @@ onMounted(async () => {
 })
 
 
-const goToPort = (evt, row) => {
+const goToPort = ( row) => {
   router.push(`/ports/${row.id}`)
 }
 </script>

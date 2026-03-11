@@ -36,7 +36,6 @@ const bookingsColumns = [
             <template v-if="mooring">
               <div class="row items-baseline q-gutter-sm">
                 <span class="text-h4 text-weight-bold text-grey-9">{{ mooring.number }}</span>
-                <q-badge outline color="primary" label="Amarre Activo" />
               </div>
               <div class="row q-gutter-md q-mt-xs text-subtitle1 text-grey-7">
                 <div class="row items-center">

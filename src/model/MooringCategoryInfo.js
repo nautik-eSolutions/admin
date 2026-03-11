@@ -1,5 +1,5 @@
 export class MooringCategoryInfo {
-  constructor({ id,name ,zonePortName, zoneName, dimensionsMaxBeam, dimensionsMaxLength, dimensionsMaxDraft, minPricePerDay, dimensions }) {
+  constructor({ id,name ,zonePortName, zoneName, dimensionsMaxBeam, dimensionsMaxLength, dimensionsMaxDraft, minPricePerDay, dimensions ,priceConfigurations}) {
     this.id = id
     this.name = name
     this.zonePortName = zonePortName
@@ -9,6 +9,7 @@ export class MooringCategoryInfo {
     this.dimensionsMaxDraft = dimensionsMaxDraft
     this.minPricePerDay = minPricePerDay
     this.dimensions = dimensions
+    this.priceConfigurations =priceConfigurations
   }
 
   static fromJson(json) {
@@ -22,6 +23,7 @@ export class MooringCategoryInfo {
       dimensionsMaxDraft: json.dimensionsMaxDraft,
       minPricePerDay: json.minPricePerDay,
       dimensions: json.dimensions ?? null,
+      priceConfigurations:json.priceConfigurations ?? null
     })
   }
 }

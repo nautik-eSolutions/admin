@@ -1,9 +1,10 @@
 export class MooringCategory {
-  constructor({dimensionsId, id,minPricePerDay, zoneId ,name }) {
+  constructor({dimensionsId, id,minPricePerDay, zoneId ,name ,priceConfigurations}) {
     this.id = id
     this.zoneId = zoneId
     this.dimensionsId = dimensionsId
     this.minPricePerDay = minPricePerDay
+    this.priceConfigurations=priceConfigurations
     this.name = name
   }
 
@@ -13,6 +14,7 @@ export class MooringCategory {
       id: json.id,
       minPricePerDay: json.minPricePerDay,
       zoneId: json.zoneId,
+      priceConfigurations:json.priceConfigurations,
       name:json.name
     })
   }

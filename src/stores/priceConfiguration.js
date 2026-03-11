@@ -24,9 +24,9 @@ export const usePriceConfigurationStore = defineStore('priceConfiguration', {
 
   actions: {
 
-    async getAllPriceConfigurations(portId) {
+    async getAllPriceConfigurations() {
       try {
-        const resp = await getAllPriceConfigurations(portId)
+        const resp = await getAllPriceConfigurations()
 
         if (!isOk(resp)) throw new Error()
         this.priceConfigurations = resp.data.map(PriceConfiguration.fromJson)
@@ -37,9 +37,9 @@ export const usePriceConfigurationStore = defineStore('priceConfiguration', {
       }
     },
 
-    async createPriceConfiguration(portId, payload) {
+    async createPriceConfiguration( payload) {
       try {
-        const resp = await createPriceConfiguration(portId, payload)
+        const resp = await createPriceConfiguration(payload)
         if (!isOk(resp)) throw new Error()
         const created = PriceConfiguration.fromJson(resp.data)
         this.priceConfigurations.push(created)
@@ -50,9 +50,9 @@ export const usePriceConfigurationStore = defineStore('priceConfiguration', {
       }
     },
 
-    async updatePriceConfiguration(portId, id, payload) {
+    async updatePriceConfiguration( id, payload) {
       try {
-        const resp = await updatePriceConfiguration(portId, id, payload)
+        const resp = await updatePriceConfiguration( id, payload)
         if (!isOk(resp)) throw new Error()
         const updated = PriceConfiguration.fromJson(resp.data)
         const idx = this.priceConfigurations.findIndex((p) => p.id === id)
@@ -65,9 +65,9 @@ export const usePriceConfigurationStore = defineStore('priceConfiguration', {
       }
     },
 
-    async deletePriceConfiguration(portId, id) {
+    async deletePriceConfiguration( id) {
       try {
-        const resp = await deletePriceConfiguration(portId, id)
+        const resp = await deletePriceConfiguration( id)
         if (!isOk(resp)) throw new Error()
         this.priceConfigurations = this.priceConfigurations.filter((p) => p.id !== id)
         if (this.priceConfiguration?.id === id) this.priceConfiguration = null

@@ -71,3 +71,15 @@ export class ZoneService {
 
   }
 }
+
+export async function getServicesByZone(zoneId) {
+  return await api.get(`services/zone/${zoneId}`)
+}
+
+export async function addServiceToZone(serviceId, zoneId) {
+  return await api.post(`services/${serviceId}/zone/${zoneId}`)
+}
+
+export async function removeServiceFromZone(serviceId, zoneId) {
+  return await api.delete(`services/${serviceId}/zone/${zoneId}`)
+}

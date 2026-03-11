@@ -2,9 +2,9 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import { useMooringCategoryStore } from '../stores/mooringCategory'
-import {ZoneService} from '../service/ZoneService'
-import {getDimensionsByPort} from '../service/MooringDimensionsService'
+import { useMooringCategoryStore } from 'stores/mooringCategory'
+import {ZoneService} from '../../service/ZoneService'
+import {getDimensionsByPort} from '../../service/MooringDimensionsService'
 import {usePortStore} from "stores/port.js";
 const portStore = usePortStore()
 
@@ -40,6 +40,7 @@ onMounted(async () => {
     ZoneService.getZonesByPort(PORT_ID),
     getDimensionsByPort(PORT_ID),
   ])
+  console.log(PORT_ID)
   zoneOptions.value = zonesRes
   dimensionOptions.value = dimensionsRes
 })

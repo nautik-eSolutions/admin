@@ -6,7 +6,7 @@ import {
   updateMooringDimension,
   deleteMooringDimension,
   createMooringDimension
-} from '../service/MooringDimensionsService'
+} from '../../service/MooringDimensionsService'
 import {usePortStore} from "stores/port.js";
 const portStore = usePortStore()
 

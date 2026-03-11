@@ -1,17 +1,15 @@
 <script setup>
-import { ref } from 'vue'
-import { useAuthStore } from '../stores/auth.js'
-import { usePortStore } from '../stores/port.js'
-import { useRouter } from 'vue-router'
-import { PortService } from '../service/PortService.js'
+import {ref} from 'vue'
+import {useAuthStore} from '../stores/auth.js'
+import {usePortStore} from '../stores/port.js'
+import {useRouter} from 'vue-router'
+import {PortService} from '../service/PortService.js'
 
 const username = ref('')
 const password = ref('')
 const auth = useAuthStore()
 const portStore = usePortStore()
 const router = useRouter()
-
-// Selector de puerto para ADMIN_COMPANY
 const portDialogOpen = ref(false)
 const ports = ref([])
 const selectedPort = ref(null)
@@ -28,14 +26,9 @@ const portRules = [
 
 const onSubmit = async () => {
   await auth.loginUser(username.value, password.value)
-  if (auth.isAuthenticated) {
-    if (auth.role === 'ADMIN_COMPANY') {
-      const rawPorts = await PortService.getAll()
-      ports.value = rawPorts.map(p => ({ label: p.name, value: p.id }))
-      portDialogOpen.value = true
-    } else {
-      router.push('/')
-    }
+
+  if (auth.isAuthenticated){
+    router.push("/")
   }
 }
 
@@ -66,7 +59,7 @@ function confirmPort() {
           rounded standout
         >
           <template v-slot:prepend>
-            <q-icon name="person" color="primary" />
+            <q-icon name="person" color="primary"/>
           </template>
         </q-input>
 
@@ -80,7 +73,7 @@ function confirmPort() {
           rounded standout
         >
           <template v-slot:prepend>
-            <q-icon name="lock" color="primary" />
+            <q-icon name="lock" color="primary"/>
           </template>
         </q-input>
 
@@ -121,7 +114,7 @@ function confirmPort() {
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn color="primary" label="Confirmar" type="submit" unelevated />
+          <q-btn color="primary" label="Confirmar" type="submit" unelevated/>
         </q-card-actions>
       </q-form>
     </q-card>

@@ -122,5 +122,9 @@ export const useMooring = defineStore('mooring', {
         }
       }
     },
+
+    async createIncident(mooringId, payload){
+
+    }
   },
 })
